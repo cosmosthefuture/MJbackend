@@ -17,7 +17,7 @@ return new class extends Migration
             // $table->string('email')->unique();
             $table->string('phone_number')->unique();
             $table->string('username')->unique();
-            $table->integer('incentive_percentage');
+            $table->integer('winning_commission_percentage');
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->boolean('force_reset_password')->default(0);
             $table->boolean('is_default')->default(0);

@@ -5,21 +5,21 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\ApiController;
 use App\Http\Services\Admin\GameService;
 use Illuminate\Http\Request;
-use App\Http\Requests\Admin\GameRule\CreateRequest;
-use App\Http\Requests\Admin\GameRule\UpdateRequest;
-use App\Http\Requests\Admin\GameRule\ListingRequest;
-use App\Http\Services\Admin\GameRuleService;
+use App\Http\Requests\Admin\MahJongGameRule\CreateRequest;
+use App\Http\Requests\Admin\MahJongGameRule\UpdateRequest;
+use App\Http\Requests\Admin\MahJongGameRule\ListingRequest;
+use App\Http\Services\Admin\MahJongGameRuleService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class GameRuleController extends ApiController
+class MahJongGameRuleController extends ApiController
 {
-    private $game_rule_service;
+    private $mah_jong_game_rule_service;
     private $game_service;
 
-    public function __construct(GameRuleService $game_rule_service, GameService $game_service)
+    public function __construct(MahJongGameRuleService $mah_jong_game_rule_service, GameService $game_service)
     {
-        $this->game_rule_service = $game_rule_service;
+        $this->mah_jong_game_rule_service = $mah_jong_game_rule_service;
         $this->game_service = $game_service;
     }
 
@@ -48,7 +48,7 @@ class GameRuleController extends ApiController
                     $status = $search;
                 }
             }
-            $res_data = $this->game_rule_service->getDataWithPagination($per_page, $page, with: ['game', 'createdBy', 'updatedBy'], status: $status, searches: $searches);
+            $res_data = $this->mah_jong_game_rule_service->getDataWithPagination($per_page, $page, with: ['game', 'createdBy', 'updatedBy'], status: $status, searches: $searches);
             return $this->paginatedSuccessResponse($res_data, 200, 'Game Rule Lists');
         } catch (\Exception $e) {
             logger()->error($e);
@@ -62,7 +62,7 @@ class GameRuleController extends ApiController
             if (! is_numeric($id)) {
                 return $this->errorResponse('ID must be an integer!', 422);
             }
-            $data = $this->game_rule_service->find($id);
+            $data = $this->mah_jong_game_rule_service->find($id);
             if ($data) {
                 return $this->successResponse($data, 200, 'game rule');
             } else {
@@ -82,7 +82,7 @@ class GameRuleController extends ApiController
                 return $this->validationErrorResponse($validator);
             }
             $validated = $request->validated();
-            $result = $this->game_rule_service->create($validated);
+            $result = $this->mah_jong_game_rule_service->create($validated);
             return $this->successResponse($result, 200, 'Game Rule is created successfully');
         } catch (\Exception $e) {
             logger()->error($e);
@@ -98,9 +98,9 @@ class GameRuleController extends ApiController
                 return $this->validationErrorResponse($validator);
             }
             $validated = $request->validated();
-            $data = $this->game_rule_service->find($id);
+            $data = $this->mah_jong_game_rule_service->find($id);
             if ($data) {
-                $result = $this->game_rule_service->update($id, $validated);
+                $result = $this->mah_jong_game_rule_service->update($id, $validated);
                 return $this->successResponse($result, 200, 'Game Rule is updated successfully');
             } else {
                 return $this->errorResponse('Game Rule not found', 404);
@@ -118,9 +118,9 @@ class GameRuleController extends ApiController
             if (! is_numeric($id)) {
                 return $this->errorResponse('ID must be an integer!', 422);
             }
-            $data = $this->game_rule_service->find($id);
+            $data = $this->mah_jong_game_rule_service->find($id);
             if ($data) {
-                if ($this->game_rule_service->delete($id)) {
+                if ($this->mah_jong_game_rule_service->delete($id)) {
                     return $this->successResponse([], 200, 'Game Rule deleted successfully!');
                 }
             } else {
@@ -138,9 +138,9 @@ class GameRuleController extends ApiController
             if (!is_numeric($id)) {
                 return $this->errorResponse('ID must be an integer!', 422);
             }
-            $data = $this->game_rule_service->find($id);
+            $data = $this->mah_jong_game_rule_service->find($id);
             if ($data) {
-                $this->game_rule_service->toggleGameRuleStatus($data);
+                $this->mah_jong_game_rule_service->toggleGameRuleStatus($data);
                 return $this->successResponse([], 200, 'Toggle status successfully');
             } else {
                 return $this->errorResponse('Game Rule not found', 404);
@@ -169,7 +169,7 @@ class GameRuleController extends ApiController
             $conditions = ['game_id' => $gameTypeId];
             $status = "active";
 
-            $res_data = $this->game_rule_service->getDataWithPagination($per_page, $page, status: $status, conditions: $conditions);
+            $res_data = $this->mah_jong_game_rule_service->getDataWithPagination($per_page, $page, status: $status, conditions: $conditions);
             return $this->paginatedSuccessResponse($res_data, 200, 'Game Rule Lists By Game Type');
         } catch (\Exception $e) {
             logger()->error($e);

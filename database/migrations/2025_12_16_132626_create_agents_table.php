@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('phone_number')->unique();
             $table->string('username')->unique();
             $table->string('agent_code')->unique();
-            $table->integer('incentive_percentage');
+            $table->integer('winning_commission_percentage');
             $table->foreignId('master_id')->constrained('masters')->onDelete('cascade');
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->boolean('force_reset_password')->default(0);

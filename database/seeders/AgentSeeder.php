@@ -20,7 +20,7 @@ class AgentSeeder extends Seeder
             'username' => 'defaultagent123',
             'phone_number' => '09000000000',
             'agent_code' => 'DEFAULT',
-            'incentive_percentage' => 2,
+            'winning_commission_percentage' => 2,
             'master_id' => 1,
             'is_default' => 1
         ]);

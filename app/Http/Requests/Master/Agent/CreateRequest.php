@@ -59,7 +59,7 @@ class CreateRequest extends FormRequest
                 'unique:agents,agent_code',
             ],
 
-            'incentive_percentage' => [
+            'winning_commission_percentage' => [
                 'required',
                 'integer',
                 'min:1',

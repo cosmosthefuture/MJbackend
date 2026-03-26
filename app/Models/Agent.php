@@ -22,7 +22,7 @@ class Agent extends Model implements Wallet
         'username',
         'agent_code',
         'password',
-        'incentive_percentage',
+        'winning_commission_percentage',
         'master_id',
         'status',
         'is_default',

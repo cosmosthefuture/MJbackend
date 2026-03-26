@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\GameRule;
+namespace App\Http\Requests\Admin\MahJongGameRule;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -18,43 +18,30 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         $id = $this->route('id');
+
         return [
             'rule_name' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('game_rules')
-                    ->where(fn($q) => $q->where('game_id', $this->game_id))
+                Rule::unique('mah_jong_game_rules')
                     ->ignore($id),
             ],
+            'match_qty_per_round' => ['required', 'integer', 'min:1'],
+            'max_player' => ['required', 'integer', 'min:2'],
+            'bet_amount' => ['required', 'numeric', 'min:0'],
 
-            'min_bet_amount' => [
+            'fees' => ['required', 'array', 'size:3'],
+
+            'fees.*.fee_type' => [
                 'required',
-                'numeric',
-                'min:1',
+                'in:room,registration,winning_commission',
+                'distinct'
             ],
-
-            'max_bet_amount' => [
+            'fees.*.amount' => ['required', 'numeric', 'min:0'],
+            'fees.*.payer_type' => [
                 'required',
-                'numeric',
-                'gte:min_bet_amount',
-            ],
-
-            'time_per_round' => [
-                'required',
-                'integer',
-                'min:1',
-            ],
-
-            'user_limit' => [
-                'nullable',
-                'integer',
-                'min:1',
-            ],
-
-            'game_id' => [
-                'required',
-                'exists:games,id',
+                'in:winner,each_player'
             ],
         ];
     }

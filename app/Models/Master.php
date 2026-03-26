@@ -21,7 +21,7 @@ class Master extends Model implements Wallet
         'phone_number',
         'username',
         'password',
-        'incentive_percentage',
+        'winning_commission_percentage',
         'status',
         'is_default',
         'force_reset_password',

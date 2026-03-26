@@ -55,7 +55,7 @@ class UpdateRequest extends FormRequest
                 'unique:agents,agent_code,' . $id,
             ],
 
-            'incentive_percentage' => [
+            'winning_commission_percentage' => [
                 'required',
                 'integer',
                 'min:1',

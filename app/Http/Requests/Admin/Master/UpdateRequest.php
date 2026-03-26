@@ -47,7 +47,7 @@ class UpdateRequest extends FormRequest
                 'unique:masters,username,' . $id,
             ],
 
-            'incentive_percentage' => [
+            'winning_commission_percentage' => [
                 'required',
                 'integer',
                 'min:1',
