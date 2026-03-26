@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Http\Requests\Admin\PaymentMethod;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'type' => ['required', 'string'],
+            'account_username' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+            'phone_number' => [
+                'required',
+                'regex:/^09\d{8,9}$/'
+            ]
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'phone_number.regex' =>
+                'Phone number must start with 09 and contain 8 or 9 digits after it.',
+        ];
+    }
+
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        $errors = $validator->errors();
+        return $errors;
+    }
+}

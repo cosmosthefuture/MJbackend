@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Http\Requests\User\UserMoneyTransfer;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class MoneyTransferAcceptRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'record_id' => 'required|integer|exists:user_money_transfer_records,id',
+            'notification_id' => 'required|integer|exists:notifications,id',
+        ];
+    }
+
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        $errors = $validator->errors();
+        return $errors;
+    }
+}

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Master Monthly Incentive Report</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f8f9fa;
+        }
+
+        th {
+            background: #343a40;
+            color: #fff;
+            text-align: center;
+        }
+
+        td {
+            vertical-align: middle;
+        }
+
+        .month-cell,
+        .id-cell {
+            background: #e9ecef;
+            font-weight: bold;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .total-row {
+            background: #dee2e6;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <h3 class="mb-4">📊 Master Monthly Incentive Report</h3>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th width="5%">ID</th>
+                    <th width="10%">Month</th>
+                    <th>Agent</th>
+                    <th>Total Deposit</th>
+                    <th>Total Agent Incentive</th>
+                    <th>Total Your Incentive</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center">
+            <button class="btn btn-secondary" id="prevBtn">⬅ Prev</button>
+            <span id="pageInfo"></span>
+            <button class="btn btn-secondary" id="nextBtn">Next ➡</button>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * ===== MOCK API RESPONSES (MATCHES YOUR BACKEND FORMAT) =====
+         */
+        const apiResponses = {
+            1: {
+                response: { status: "success", message: "Monthly Incentive Report" },
+                data: [
+                    {
+                        month: "2026-02",
+                        agents: [
+                            {
+                                agent_id: 1,
+                                agent_name: "Agent Kyaw Gyi",
+                                total_deposit_amount: 1080000,
+                                total_agent_incentive_amount: 21600,
+                                total_master_incentive_amount: 32400
+                            },
+                            {
+                                agent_id: 2,
+                                agent_name: "Agent Zaw Gyi",
+                                total_deposit_amount: 860000,
+                                total_agent_incentive_amount: 17200,
+                                total_master_incentive_amount: 25800
+                            }
+                        ],
+                        month_total: {
+                            total_deposit_amount: 1940000,
+                            total_agent_incentive_amount: 38800,
+                            total_master_incentive_amount: 58200
+                        }
+                    },
+                    {
+                        month: "2026-01",
+                        agents: [
+                            {
+                                agent_id: 1,
+                                agent_name: "Agent Kyaw Gyi",
+                                total_deposit_amount: 100000,
+                                total_agent_incentive_amount: 2000,
+                                total_master_incentive_amount: 3000
+                            },
+                            {
+                                agent_id: 2,
+                                agent_name: "Agent Zaw Gyi",
+                                total_deposit_amount: 100000,
+                                total_agent_incentive_amount: 2000,
+                                total_master_incentive_amount: 3000
+                            }
+                        ],
+                        month_total: {
+                            total_deposit_amount: 200000,
+                            total_agent_incentive_amount: 4000,
+                            total_master_incentive_amount: 6000
+                        }
+                    }
+                ],
+                meta: {
+                    total: 3,
+                    per_page: 2,
+                    current_page: 1,
+                    total_pages: 2
+                }
+            },
+            2: {
+                response: { status: "success", message: "Monthly Incentive Report" },
+                data: [
+                    {
+                        month: "2025-12",
+                        agents: [
+                            {
+                                agent_id: 1,
+                                agent_name: "Agent Kyaw Gyi",
+                                total_deposit_amount: 50000,
+                                total_agent_incentive_amount: 1000,
+                                total_master_incentive_amount: 1500
+                            }
+                        ],
+                        month_total: {
+                            total_deposit_amount: 50000,
+                            total_agent_incentive_amount: 1000,
+                            total_master_incentive_amount: 1500
+                        }
+                    }
+                ],
+                meta: {
+                    total: 3,
+                    per_page: 2,
+                    current_page: 2,
+                    total_pages: 2
+                }
+            }
+        };
+
+        let currentPage = 1;
+
+        const tbody = document.getElementById("tableBody");
+        const pageInfo = document.getElementById("pageInfo");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+
+        function renderTable(apiResponse) {
+            const { data, meta } = apiResponse;
+            tbody.innerHTML = "";
+
+            data.forEach((monthItem, monthIndex) => {
+
+                monthItem.agents.forEach((agent, agentIndex) => {
+                    const tr = document.createElement("tr");
+
+                    if (agentIndex === 0) {
+                        const idTd = document.createElement("td");
+                        idTd.rowSpan = monthItem.agents.length + 1;
+                        idTd.className = "id-cell text-center";
+                        idTd.innerText =
+                            ((meta.current_page - 1) * meta.per_page) + monthIndex + 1;
+                        tr.appendChild(idTd);
+
+                        const monthTd = document.createElement("td");
+                        monthTd.rowSpan = monthItem.agents.length + 1;
+                        monthTd.className = "month-cell";
+                        monthTd.innerText = monthItem.month;
+                        tr.appendChild(monthTd);
+                    }
+
+                    tr.innerHTML += `
+                        <td>${agent.agent_name}</td>
+                        <td class="text-right">${agent.total_deposit_amount.toLocaleString()}</td>
+                        <td class="text-right">${agent.total_agent_incentive_amount.toLocaleString()}</td>
+                        <td class="text-right">${agent.total_master_incentive_amount.toLocaleString()}</td>
+                    `;
+
+                    tbody.appendChild(tr);
+                });
+
+                // ===== MONTH TOTAL ROW =====
+                const totalTr = document.createElement("tr");
+                totalTr.className = "total-row";
+                totalTr.innerHTML = `
+                    <td class="text-end">TOTAL</td>
+                    <td class="text-right">${monthItem.month_total.total_deposit_amount.toLocaleString()}</td>
+                    <td class="text-right">${monthItem.month_total.total_agent_incentive_amount.toLocaleString()}</td>
+                    <td class="text-right">${monthItem.month_total.total_master_incentive_amount.toLocaleString()}</td>
+                `;
+                tbody.appendChild(totalTr);
+            });
+
+            pageInfo.innerText = `Page ${meta.current_page} of ${meta.total_pages}`;
+            prevBtn.disabled = meta.current_page === 1;
+            nextBtn.disabled = meta.current_page === meta.total_pages;
+        }
+
+        function loadPage(page) {
+            const response = apiResponses[page];
+            if (!response) return;
+            currentPage = page;
+            renderTable(response);
+        }
+
+        prevBtn.onclick = () => loadPage(currentPage - 1);
+        nextBtn.onclick = () => loadPage(currentPage + 1);
+
+        loadPage(1);
+    </script>
+
+</body>
+
+</html>
