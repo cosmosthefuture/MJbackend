@@ -5,6 +5,7 @@ use App\Http\Controllers\User\DepositController;
 use App\Http\Controllers\User\GameController;
 use App\Http\Controllers\User\GameRoomController;
 use App\Http\Controllers\User\GameRuleController;
+use App\Http\Controllers\User\MahJongGameRoomController;
 use App\Http\Controllers\User\MoneyTransferController;
 use App\Http\Controllers\User\NotificationController;
 use App\Http\Controllers\User\PaymentMethodController;
@@ -49,11 +50,9 @@ Route::prefix('users')->group(function () {
             Route::get('/all', [GameRuleController::class, 'index']);
         });
 
-        Route::prefix('game-rooms')->group(function () {
-            Route::get('all', [GameRoomController::class, 'index']);
-            Route::post('{id}/spin-wheel/enter', [GameRoomController::class, 'enterSpinWheelGameRoom']);
-            Route::post('{id}/coin-flip/enter', [GameRoomController::class, 'enterCoinFlipGameRoom']);
-            Route::get('{id}', [GameRoomController::class, 'findOrFail']);
+        Route::prefix('mah-jong-game-rooms')->group(function () {
+            Route::get('all', [MahJongGameRoomController::class, 'index']);
+            Route::get('{id}', [MahJongGameRoomController::class, 'findOrFail']);
         });
         Route::post('game-rounds/{id}/spin-wheel/place-bet', [GameRoomController::class, 'placeBetForSpinWheel']);
         Route::post('game-rounds/{id}/spin-wheel/cancel-bet', [GameRoomController::class, 'cancelBetForSpinWheel']);

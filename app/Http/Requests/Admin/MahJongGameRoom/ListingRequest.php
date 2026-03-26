@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\User\GameRoom;
+namespace App\Http\Requests\Admin\MahJongGameRoom;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,7 +26,7 @@ class ListingRequest extends FormRequest
             'per_page' => 'integer',
             'search' => 'string',
             'game_id' => 'integer|exists:games,id',
-            'game_rule_id' => 'integer|exists:game_rules,id',
+            'mah_jong_game_rule_id' => 'integer|exists:mah_jong_game_rules,id',
         ];
     }
 

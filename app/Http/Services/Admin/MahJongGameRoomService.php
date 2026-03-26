@@ -2,14 +2,14 @@
 
 namespace App\Http\Services\Admin;
 
-use App\Http\Repositories\Admin\GameRoomRepository;
+use App\Http\Repositories\Admin\MahJongGameRoomRepository;
 use Exception;
 
-class GameRoomService
+class MahJongGameRoomService
 {
     protected $game_room_repository;
 
-    public function __construct(GameRoomRepository $game_room_repository)
+    public function __construct(MahJongGameRoomRepository $game_room_repository)
     {
         $this->game_room_repository = $game_room_repository;
     }
