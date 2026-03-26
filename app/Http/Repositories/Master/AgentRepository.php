@@ -27,7 +27,7 @@ class AgentRepository extends BaseRepo
                 'master_id' => auth('api-master')->user()->id,
                 'password' => Hash::make($attributes['password']),
                 'phone_number' => $attributes['phone_number'],
-                'incentive_percentage' => $attributes['incentive_percentage']
+                'winning_commission_percentage' => $attributes['winning_commission_percentage']
             ];
             $agent = parent::create($data);
             DB::commit();

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\GameController;
 use App\Http\Controllers\Admin\GameRoomController;
 use App\Http\Controllers\Admin\GameRuleController;
 use App\Http\Controllers\Admin\GlobalCommissionSettingController;
+use App\Http\Controllers\Admin\MahJongGameRuleController;
 use App\Http\Controllers\Admin\MoneyTransferController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\PaymentMethodController;
@@ -127,13 +128,13 @@ Route::prefix('admins')->group(function () {
             Route::get('{id}', [GameController::class, 'findOrFail'])->middleware(CheckPermission::class . ':game_view');
         });
 
-        Route::prefix('game-rules')->group(function () {
-            Route::patch('{id}/toggle-status', [GameRuleController::class, 'toggleActive'])->middleware(CheckPermission::class . ':game_rule_update');
-            Route::get('{game_type_id}/filter-by-game', [GameRuleController::class, 'getRulesByGameType'])->middleware(CheckPermission::class . ':game_rule_view');
-            Route::get('all', [GameRuleController::class, 'index'])->middleware(CheckPermission::class . ':game_rule_view');
-            Route::post('', [GameRuleController::class, 'create'])->middleware(CheckPermission::class . ':game_rule_create');
-            Route::put('{id}', [GameRuleController::class, 'update'])->middleware(CheckPermission::class . ':game_rule_update');
-            Route::get('{id}', [GameRuleController::class, 'findOrFail'])->middleware(CheckPermission::class . ':game_rule_view');
+        Route::prefix('mah-jong-game-rules')->group(function () {
+            Route::patch('{id}/toggle-status', [MahJongGameRuleController::class, 'toggleActive'])->middleware(CheckPermission::class . ':game_rule_update');
+            // Route::get('{game_type_id}/filter-by-game', [MahJongGameRuleController::class, 'getRulesByGameType'])->middleware(CheckPermission::class . ':game_rule_view');
+            Route::get('all', [MahJongGameRuleController::class, 'index'])->middleware(CheckPermission::class . ':game_rule_view');
+            Route::post('', [MahJongGameRuleController::class, 'create'])->middleware(CheckPermission::class . ':game_rule_create');
+            Route::put('{id}', [MahJongGameRuleController::class, 'update'])->middleware(CheckPermission::class . ':game_rule_update');
+            Route::get('{id}', [MahJongGameRuleController::class, 'findOrFail'])->middleware(CheckPermission::class . ':game_rule_view');
         });
 
         Route::prefix('game-rooms')->group(function () {

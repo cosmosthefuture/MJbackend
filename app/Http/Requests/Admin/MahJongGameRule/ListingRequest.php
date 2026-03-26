@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\GameRule;
+namespace App\Http\Requests\Admin\MahJongGameRule;
 
 use Illuminate\Foundation\Http\FormRequest;
 

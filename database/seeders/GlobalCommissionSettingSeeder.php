@@ -23,9 +23,9 @@ class GlobalCommissionSettingSeeder extends Seeder
             'value' => 5
         ]);
 
-        GlobalCommissionSetting::create([
-            'name' => 'User Money Transfer House Cut Percentage',
-            'value' => 1
-        ]);
+        // GlobalCommissionSetting::create([
+        //     'name' => 'User Money Transfer House Cut Percentage',
+        //     'value' => 1
+        // ]);
     }
 }

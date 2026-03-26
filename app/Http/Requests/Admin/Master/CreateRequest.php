@@ -51,7 +51,7 @@ class CreateRequest extends FormRequest
                 'unique:masters,username',
             ],
 
-            'incentive_percentage' => [
+            'winning_commission_percentage' => [
                 'required',
                 'integer',
                 'min:1',

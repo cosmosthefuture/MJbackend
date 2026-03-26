@@ -19,7 +19,7 @@ class MasterSeeder extends Seeder
             'password' => Hash::make('password123'),
             'username' => 'defaultmaster123',
             'phone_number' => '09000000000',
-            'incentive_percentage' => 5,
+            'winning_commission_percentage' => 5,
             'is_default' => 1
         ]);
     }

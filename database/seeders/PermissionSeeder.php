@@ -27,32 +27,32 @@ class PermissionSeeder extends Seeder
                 'user_update' => 'Update User',
                 'user_delete' => 'Delete User',
             ],
-            'Payment Method Management' => [
-                'payment_method_view' => 'View Payment Methods',
-                'payment_method_create' => 'Create Payment Method',
-                'payment_method_update' => 'Update Payment Method',
-                'payment_method_delete' => 'Delete Payment Method',
-            ],
-            'User Deposit Management' => [
-                'user_deposit_request_view' => 'View User Deposit Requests',
-                'manual_create_user_deposit' => 'Manual Create User Deposit',
-                'user_deposit_request_action' => 'Approve or Reject User Deposit Request',
-            ],
-            'User Withdraw Management' => [
-                'user_withdraw_request_view' => 'View User Withdraw Requests',
-                'manual_create_user_withdraw' => 'Manual Create User Withdraw',
-                'user_withdraw_request_action' => 'Approve or Reject User Withdraw Request',
-            ],
-            'Agent Withdraw Management' => [
-                'agent_withdraw_request_view' => 'View Agent Withdraw Requests',
-                'manual_create_agent_withdraw' => 'Manual Create Agent Withdraw',
-                'agent_withdraw_request_action' => 'Approve or Reject Agent Withdraw Request',
-            ],
-            'Master Withdraw Management' => [
-                'master_withdraw_request_view' => 'View Master Withdraw Requests',
-                'manual_create_master_withdraw' => 'Manual Create Master Withdraw',
-                'master_withdraw_request_action' => 'Approve or Reject Master Withdraw Request',
-            ],
+            // 'Payment Method Management' => [
+            //     'payment_method_view' => 'View Payment Methods',
+            //     'payment_method_create' => 'Create Payment Method',
+            //     'payment_method_update' => 'Update Payment Method',
+            //     'payment_method_delete' => 'Delete Payment Method',
+            // ],
+            // 'User Deposit Management' => [
+            //     'user_deposit_request_view' => 'View User Deposit Requests',
+            //     'manual_create_user_deposit' => 'Manual Create User Deposit',
+            //     'user_deposit_request_action' => 'Approve or Reject User Deposit Request',
+            // ],
+            // 'User Withdraw Management' => [
+            //     'user_withdraw_request_view' => 'View User Withdraw Requests',
+            //     'manual_create_user_withdraw' => 'Manual Create User Withdraw',
+            //     'user_withdraw_request_action' => 'Approve or Reject User Withdraw Request',
+            // ],
+            // 'Agent Withdraw Management' => [
+            //     'agent_withdraw_request_view' => 'View Agent Withdraw Requests',
+            //     'manual_create_agent_withdraw' => 'Manual Create Agent Withdraw',
+            //     'agent_withdraw_request_action' => 'Approve or Reject Agent Withdraw Request',
+            // ],
+            // 'Master Withdraw Management' => [
+            //     'master_withdraw_request_view' => 'View Master Withdraw Requests',
+            //     'manual_create_master_withdraw' => 'Manual Create Master Withdraw',
+            //     'master_withdraw_request_action' => 'Approve or Reject Master Withdraw Request',
+            // ],
             'Global Commission Setting Management' => [
                 'global_commission_setting_view' => 'View Global Commission Settings',
                 'global_commission_setting_update' => 'Update Global Commission Setting',
@@ -82,9 +82,9 @@ class PermissionSeeder extends Seeder
             'Agent Management' => [
                 'agent_view' => 'View Agents',
             ],
-            'User Money Transfer Management' => [
-                'money_transfer_record_view' => 'View User Money Transfer Records',
-            ],
+            // 'User Money Transfer Management' => [
+            //     'money_transfer_record_view' => 'View User Money Transfer Records',
+            // ],
             'Report' => [
                 'report_view' => 'View Reports',
             ],
