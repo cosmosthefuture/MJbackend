@@ -4,18 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
-use App\Http\Requests\Admin\GameRoom\CreateRequest;
-use App\Http\Requests\Admin\GameRoom\UpdateRequest;
-use App\Http\Requests\Admin\GameRoom\ListingRequest;
-use App\Http\Services\Admin\GameRoomService;
+use App\Http\Requests\Admin\MahJongGameRoom\CreateRequest;
+use App\Http\Requests\Admin\MahJongGameRoom\UpdateRequest;
+use App\Http\Requests\Admin\MahJongGameRoom\ListingRequest;
+use App\Http\Services\Admin\MahJongGameRoomService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class GameRoomController extends ApiController
+class MahJongGameRoomController extends ApiController
 {
     private $game_room_service;
 
-    public function __construct(GameRoomService $game_room_service)
+    public function __construct(MahJongGameRoomService $game_room_service)
     {
         $this->game_room_service = $game_room_service;
     }
@@ -52,13 +52,13 @@ class GameRoomController extends ApiController
 
                 $conditions['game_id'] = $game_id;
             }
-            if (!empty($validated['game_rule_id'])) {
-                $game_rule_id = $validated['game_rule_id'];
+            if (!empty($validated['mah_jong_game_rule_id'])) {
+                $mah_jong_game_rule_id = $validated['mah_jong_game_rule_id'];
 
-                $conditions['game_rule_id'] = $game_rule_id;
+                $conditions['mah_jong_game_rule_id'] = $mah_jong_game_rule_id;
             }
 
-            $res_data = $this->game_room_service->getDataWithPagination($per_page, $page, with: ['game', 'createdBy', 'gameRule'], status: $status, searches: $searches, conditions:$conditions);
+            $res_data = $this->game_room_service->getDataWithPagination($per_page, $page, with: ['game', 'createdBy', 'gameRule.fees'], status: $status, searches: $searches, conditions:$conditions);
             return $this->paginatedSuccessResponse($res_data, 200, 'Game Room Lists');
         } catch (\Exception $e) {
             logger()->error($e);

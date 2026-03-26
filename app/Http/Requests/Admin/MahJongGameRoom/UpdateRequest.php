@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Admin\GameRoom;
+namespace App\Http\Requests\Admin\MahJongGameRoom;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CreateRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,17 +15,13 @@ class CreateRequest extends FormRequest
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
+        $id = $this->route('id');
         return [
-            'game_rule_id' => [
+            'mah_jong_game_rule_id' => [
                 'required',
-                'exists:game_rules,id',
+                'exists:mah_jong_game_rules,id',
             ],
 
             'game_id' => [
@@ -43,7 +39,7 @@ class CreateRequest extends FormRequest
                 'required',
                 'string',
                 'max:50',
-                'unique:game_rooms,room_code',
+                'unique:mah_jong_game_rooms,room_code,'.$id,
             ],
         ];
     }

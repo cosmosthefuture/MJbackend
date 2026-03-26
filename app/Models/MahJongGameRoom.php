@@ -38,7 +38,7 @@ class MahJongGameRoom extends Model
 
     public function gameRule()
     {
-        return $this->belongsTo(MahJongGameRule::class);
+        return $this->belongsTo(MahJongGameRule::class, 'mah_jong_game_rule_id');
     }
 
     public function game()

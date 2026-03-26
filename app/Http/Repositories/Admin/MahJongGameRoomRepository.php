@@ -3,18 +3,18 @@
 namespace App\Http\Repositories\Admin;
 
 use App\Http\Repositories\BaseRepo;
-use App\Models\GameRoom;
+use App\Models\MahJongGameRoom;
 
-class GameRoomRepository extends BaseRepo
+class MahJongGameRoomRepository extends BaseRepo
 {
-    public function __construct(GameRoom $model)
+    public function __construct(MahJongGameRoom $model)
     {
         parent::__construct($model);
     }
 
     public function find($id)
     {
-        $data = GameRoom::with(['game', 'createdBy', 'gameRule'])->find($id);
+        $data = MahJongGameRoom::with(['game', 'createdBy', 'gameRule.fees'])->find($id);
         if (!$data) {
             return null;
         }

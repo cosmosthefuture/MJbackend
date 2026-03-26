@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\GameController;
 use App\Http\Controllers\Admin\GameRoomController;
 use App\Http\Controllers\Admin\GameRuleController;
 use App\Http\Controllers\Admin\GlobalCommissionSettingController;
+use App\Http\Controllers\Admin\MahJongGameRoomController;
 use App\Http\Controllers\Admin\MahJongGameRuleController;
 use App\Http\Controllers\Admin\MoneyTransferController;
 use App\Http\Controllers\Admin\NotificationController;
@@ -137,12 +138,12 @@ Route::prefix('admins')->group(function () {
             Route::get('{id}', [MahJongGameRuleController::class, 'findOrFail'])->middleware(CheckPermission::class . ':game_rule_view');
         });
 
-        Route::prefix('game-rooms')->group(function () {
-            Route::patch('{id}/toggle-status', [GameRoomController::class, 'toggleActive'])->middleware(CheckPermission::class . ':game_room_update');
-            Route::get('all', [GameRoomController::class, 'index'])->middleware(CheckPermission::class . ':game_room_view');
-            Route::post('', [GameRoomController::class, 'create'])->middleware(CheckPermission::class . ':game_room_create');
-            Route::put('{id}', [GameRoomController::class, 'update'])->middleware(CheckPermission::class . ':game_room_update');
-            Route::get('{id}', [GameRoomController::class, 'findOrFail'])->middleware(CheckPermission::class . ':game_room_view');
+        Route::prefix('mah-jong-game-rooms')->group(function () {
+            Route::patch('{id}/toggle-status', [MahJongGameRoomController::class, 'toggleActive'])->middleware(CheckPermission::class . ':game_room_update');
+            Route::get('all', [MahJongGameRoomController::class, 'index'])->middleware(CheckPermission::class . ':game_room_view');
+            Route::post('', [MahJongGameRoomController::class, 'create'])->middleware(CheckPermission::class . ':game_room_create');
+            Route::put('{id}', [MahJongGameRoomController::class, 'update'])->middleware(CheckPermission::class . ':game_room_update');
+            Route::get('{id}', [MahJongGameRoomController::class, 'findOrFail'])->middleware(CheckPermission::class . ':game_room_view');
         });
 
         Route::prefix('spin-wheel')->group(function () {
