@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\ApiController;
+use App\Http\Requests\Admin\Master\AddMoneyToMasterRequest;
 use App\Http\Requests\Master\LoginRequest;
 use Illuminate\Http\Request;
 use App\Http\Requests\Admin\Master\CreateRequest;
@@ -62,7 +63,7 @@ class MasterController extends ApiController
     public function findOrFail($id)
     {
         try {
-            if (! is_numeric($id)) {
+            if (!is_numeric($id)) {
                 return $this->errorResponse('ID must be an integer!', 422);
             }
             $master = $this->master_service->find($id);
@@ -80,7 +81,7 @@ class MasterController extends ApiController
     public function create(CreateRequest $request)
     {
         try {
-            $validator = Validator::make($request->all(), $request->rules(),  $request->messages());
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
             if ($validator->fails()) {
                 return $this->validationErrorResponse($validator);
             }
@@ -96,7 +97,7 @@ class MasterController extends ApiController
     public function update(UpdateRequest $request, $id)
     {
         try {
-            $validator = Validator::make($request->all(), $request->rules(),  $request->messages());
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
             if ($validator->fails()) {
                 return $this->validationErrorResponse($validator);
             }
@@ -118,7 +119,7 @@ class MasterController extends ApiController
     public function delete($id)
     {
         try {
-            if (! is_numeric($id)) {
+            if (!is_numeric($id)) {
                 return $this->errorResponse('ID must be an integer!', 422);
             }
             $master = $this->master_service->find($id);
@@ -148,6 +149,22 @@ class MasterController extends ApiController
             } else {
                 return $this->errorResponse('Master not found', 404);
             }
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function addMoneyToMaster(AddMoneyToMasterRequest $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $result = $this->master_service->addMoneyToMaster($validated);
+            return $this->successResponse($result, 200, 'Money is added to Master successfully');
         } catch (\Exception $e) {
             logger()->error($e);
             return $this->errorResponse('Something went wrong!', 500);

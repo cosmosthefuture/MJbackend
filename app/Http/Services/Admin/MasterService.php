@@ -26,8 +26,8 @@ class MasterService
         array $orConditions = [],
         array $with = [],
         ?array $whereHas = null,
-        ?string $status = null)
-    {
+        ?string $status = null
+    ) {
         try {
             $result = $this->master_repository->getDataWithPagination(page: $page, perPage: $perPage, with: $with, searches: $searches, status: $status);
             return $result;
@@ -85,7 +85,7 @@ class MasterService
     {
         try {
             $result = $this->master_repository->whereFirst($column, $value);
-            if(!$result) {
+            if (!$result) {
                 return null;
             }
             return $result;
@@ -98,5 +98,16 @@ class MasterService
     public function toggleMasterStatus($master)
     {
         $this->master_repository->toggleActive($master);
+    }
+
+    public function addMoneyToMaster(array $attributes)
+    {
+        try {
+            $result = $this->master_repository->addMoneyToMaster($attributes);
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to add money to master: ' . $e->getMessage());
+            throw $e;
+        }
     }
 }

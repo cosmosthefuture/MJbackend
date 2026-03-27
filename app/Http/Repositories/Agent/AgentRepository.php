@@ -7,6 +7,7 @@ use App\Models\Agent;
 use App\Models\AgentIncentive;
 use App\Models\AgentIncentiveMonthlySummary;
 use App\Models\AgentWalletDailySummary;
+use App\Models\AgentWalletRecord;
 use App\Models\UserFcmToken;
 
 class AgentRepository extends BaseRepo
@@ -130,5 +131,32 @@ class AgentRepository extends BaseRepo
             ]
         );
         return $result;
+    }
+
+    public function getAgentWalletRecords($page = 1, $per_page = 10, $agentId)
+    {
+        $offset = ($page - 1) * $per_page;
+
+        $query = AgentWalletRecord::where('agent_id', $agentId)
+            ->orderBy('date_time', 'asc');
+
+        $totalCount = $query->count();
+
+        $results = $query
+            ->skip($offset)
+            ->take($per_page)
+            ->get();
+
+        $totalPages = (int) ceil($totalCount / $per_page);
+
+        return [
+            'data' => $results,
+            'meta' => [
+                'total' => $totalCount,
+                'per_page' => $per_page,
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+            ],
+        ];
     }
 }

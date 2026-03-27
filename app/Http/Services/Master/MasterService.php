@@ -84,4 +84,19 @@ class MasterService
             throw $e;
         }
     }
+
+    public function getMasterWalletRecords($page = 1, $per_page = 1, $masterId)
+    {
+        DB::beginTransaction();
+        try {
+            $result = $this->master_repository->getMasterWalletRecords($page, $per_page, $masterId);
+
+            DB::commit();
+            return $result;
+        } catch (Exception $e) {
+            DB::rollBack();
+            logger()->error('Error : Failed to fetch master wallet record: ' . $e->getMessage());
+            throw $e;
+        }
+    }
 }

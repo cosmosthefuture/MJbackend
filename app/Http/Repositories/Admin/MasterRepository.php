@@ -4,6 +4,7 @@ namespace App\Http\Repositories\Admin;
 
 use App\Http\Repositories\BaseRepo;
 use App\Models\Master;
+use App\Models\MasterWalletRecord;
 use App\Models\Permission;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -58,5 +59,19 @@ class MasterRepository extends BaseRepo
         } else {
             $master->update(['status' => 'active']);
         }
+    }
+
+    public function addMoneyToMaster($data)
+    {
+        $master = Master::find($data['master_id']);
+        $master->deposit($data['amount']);
+        $balance = $master->balance;
+        $data['date_time'] = now();
+        $data['description'] = "Money Added By Admin.";
+        $data['balance'] = $balance;
+        $data['type'] = 'in';
+
+        $result = MasterWalletRecord::create($data);
+        return $result;
     }
 }

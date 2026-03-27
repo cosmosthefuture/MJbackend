@@ -16,8 +16,10 @@ Route::prefix('masters')->group(function () {
 
         Route::get('daily-wallet-summary', [MasterController::class, 'getMasterDailyWalletSummary']);
         Route::get('monthly-incentive-report', [MasterController::class, 'getMasterMonthlyIncentiveReport']);
+        Route::get('wallet-records', [MasterController::class, 'getMasterWalletRecords']);
 
         Route::prefix('agents')->group(function () {
+            Route::post('/add-money', [AgentController::class, 'addMoneyToAgent']);
             Route::patch('{id}/toggle-status', [AgentController::class, 'toggleActive']);
             Route::get('/all', [AgentController::class, 'index']);
             Route::post('', [AgentController::class, 'create']);
