@@ -3,6 +3,7 @@
 namespace App\Http\Services\Agent;
 
 use App\Http\Repositories\Agent\AgentRepository;
+use DB;
 use Exception;
 
 class AgentService
@@ -98,6 +99,21 @@ class AgentService
             return $result;
         } catch (Exception $e) {
             logger()->error('Error : Failed to store agent fcm token: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getAgentWalletRecords($page = 1, $per_page = 1, $agentId)
+    {
+        DB::beginTransaction();
+        try {
+            $result = $this->agent_repository->getAgentWalletRecords($page, $per_page, $agentId);
+
+            DB::commit();
+            return $result;
+        } catch (Exception $e) {
+            DB::rollBack();
+            logger()->error('Error : Failed to fetch agent wallet record: ' . $e->getMessage());
             throw $e;
         }
     }

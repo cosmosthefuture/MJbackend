@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Requests\Master\LoginRequest;
 use App\Http\Requests\Master\MasterDailyWalletSummaryRequest;
 use App\Http\Requests\Master\MasterMonthlyIncentiveReportRequest;
+use App\Http\Requests\Master\MasterWalletRecordRequest;
 use Illuminate\Http\Request;
 use App\Http\Services\Master\MasterService;
 use Illuminate\Support\Facades\Hash;
@@ -109,6 +110,25 @@ class MasterController extends ApiController
             $user = auth('api-master')->user();
             $balance = $user->balance;
             return $this->successResponse(['wallet-balance' => $balance], 200, "wallet balance");
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function getMasterWalletRecords(MasterWalletRecordRequest $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $per_page = array_key_exists('per_page', $validated) ? $validated['per_page'] : 20;
+            $page = array_key_exists('page', $validated) ? $validated['page'] : 1;
+
+            $res_data = $this->master_service->getMasterWalletRecords($page, $per_page, auth('api-master')->user()->id);
+            return $this->paginatedSuccessResponse($res_data, 200, 'Master Wallet Records');
         } catch (\Exception $e) {
             logger()->error($e);
             return $this->errorResponse('Something went wrong!', 500);

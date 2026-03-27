@@ -8,6 +8,7 @@ use App\Models\AgentIncentive;
 use App\Models\Master;
 use App\Models\MasterIncentive;
 use App\Models\MasterWalletDailySummary;
+use App\Models\MasterWalletRecord;
 
 class MasterRepository extends BaseRepo
 {
@@ -156,5 +157,32 @@ class MasterRepository extends BaseRepo
             ],
         ];
         return $response;
+    }
+
+    public function getMasterWalletRecords($page = 1, $per_page = 10, $masterId)
+    {
+        $offset = ($page - 1) * $per_page;
+
+        $query = MasterWalletRecord::where('master_id', $masterId)
+            ->orderBy('date_time', 'asc');
+
+        $totalCount = $query->count();
+
+        $results = $query
+            ->skip($offset)
+            ->take($per_page)
+            ->get();
+
+        $totalPages = (int) ceil($totalCount / $per_page);
+
+        return [
+            'data' => $results,
+            'meta' => [
+                'total' => $totalCount,
+                'per_page' => $per_page,
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+            ],
+        ];
     }
 }

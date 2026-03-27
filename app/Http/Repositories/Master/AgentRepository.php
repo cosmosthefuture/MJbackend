@@ -4,6 +4,8 @@ namespace App\Http\Repositories\Master;
 
 use App\Http\Repositories\BaseRepo;
 use App\Models\Agent;
+use App\Models\AgentWalletRecord;
+use App\Models\MasterWalletRecord;
 use DB;
 use Exception;
 use Illuminate\Support\Facades\Hash;
@@ -58,5 +60,30 @@ class AgentRepository extends BaseRepo
         } else {
             $agent->update(['status' => 'active']);
         }
+    }
+
+    public function addMoneyToAgent($data)
+    {
+        $agent = Agent::find($data['agent_id']);
+        $agent->deposit($data['amount']);
+        $balance = $agent->balance;
+        $data['date_time'] = now();
+        $data['type'] = 'in';
+        $data['description'] = "Money Added By Master.";
+        $data['balance'] = $balance;
+
+        $result = AgentWalletRecord::create($data);
+
+        $master = $agent->master;
+        $master->withdraw($data['amount']);
+        MasterWalletRecord::create([
+            'master_id' => $master->id,
+            'date_time' => now(),
+            'type' => 'out',
+            'description' => 'Add Money To Agent.',
+            'amount' => $data['amount'],
+            'balance' => $master->balance
+        ]);
+        return $result;
     }
 }

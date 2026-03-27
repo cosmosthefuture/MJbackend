@@ -26,8 +26,8 @@ class AgentService
         array $orConditions = [],
         array $with = [],
         ?array $whereHas = null,
-        ?string $status = null)
-    {
+        ?string $status = null
+    ) {
         try {
             $result = $this->agent_repository->getDataWithPagination(page: $page, perPage: $perPage, with: $with, searches: $searches, status: $status);
             return $result;
@@ -41,7 +41,7 @@ class AgentService
     {
         try {
             $result = $this->agent_repository->find($id);
-            if($result) {
+            if ($result) {
                 $result->load('master');
             }
             return $result;
@@ -88,7 +88,7 @@ class AgentService
     {
         try {
             $result = $this->agent_repository->whereFirst($column, $value);
-            if(!$result) {
+            if (!$result) {
                 return null;
             }
             return $result;
@@ -101,5 +101,16 @@ class AgentService
     public function toggleAgentStatus($agent)
     {
         $this->agent_repository->toggleActive($agent);
+    }
+
+    public function addMoneyToAgent(array $attributes)
+    {
+        try {
+            $result = $this->agent_repository->addMoneyToAgent($attributes);
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to add money to agent: ' . $e->getMessage());
+            throw $e;
+        }
     }
 }

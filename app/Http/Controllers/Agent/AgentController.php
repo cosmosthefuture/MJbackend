@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Requests\Agent\AgentDailyWalletSummaryRequest;
 use App\Http\Requests\Agent\AgentIncentiveTransactionListRequest;
 use App\Http\Requests\Agent\AgentMonthlyIncentiveSummaryRequest;
+use App\Http\Requests\Agent\AgentWalletRecordRequest;
 use App\Http\Requests\Agent\LoginRequest;
 use Illuminate\Http\Request;
 use App\Http\Services\Agent\AgentService;
@@ -41,7 +42,7 @@ class AgentController extends ApiController
             $accessToken = $this->agent_service->generateAccessToken($agent);
             // $refreshToken = $this->agent_service->generateRefreshToken($admin);
 
-            if(isset($validated['fcm_token'])) {
+            if (isset($validated['fcm_token'])) {
                 $this->agent_service->storeFcmToken($agent, $validated['fcm_token']);
             }
 
@@ -133,6 +134,25 @@ class AgentController extends ApiController
             $user = auth('api-agent')->user();
             $balance = $user->balance;
             return $this->successResponse(['wallet-balance' => $balance], 200, "wallet balance");
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function getAgentWalletRecords(AgentWalletRecordRequest $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $per_page = array_key_exists('per_page', $validated) ? $validated['per_page'] : 20;
+            $page = array_key_exists('page', $validated) ? $validated['page'] : 1;
+
+            $res_data = $this->agent_service->getAgentWalletRecords($page, $per_page, auth('api-agent')->user()->id);
+            return $this->paginatedSuccessResponse($res_data, 200, 'Agent Wallet Records');
         } catch (\Exception $e) {
             logger()->error($e);
             return $this->errorResponse('Something went wrong!', 500);
