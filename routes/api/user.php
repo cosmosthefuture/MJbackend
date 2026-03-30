@@ -6,6 +6,7 @@ use App\Http\Controllers\User\GameController;
 use App\Http\Controllers\User\GameRoomController;
 use App\Http\Controllers\User\GameRuleController;
 use App\Http\Controllers\User\MahJongGameRoomController;
+use App\Http\Controllers\User\MahJongGameRuleController;
 use App\Http\Controllers\User\MoneyTransferController;
 use App\Http\Controllers\User\NotificationController;
 use App\Http\Controllers\User\PaymentMethodController;
@@ -46,8 +47,9 @@ Route::prefix('users')->group(function () {
         // wallet balance
         Route::get('wallet-balance', [UserController::class, 'getWalletBalance']);
 
-        Route::prefix('game-rules')->group(function () {
-            Route::get('/all', [GameRuleController::class, 'index']);
+        Route::prefix('mah-jong-game-rules')->group(function () {
+            Route::get('/all', [MahJongGameRuleController::class, 'getAllRules']);
+            Route::get('{id}', [MahJongGameRuleController::class, 'findOrFail']);
         });
 
         Route::prefix('mah-jong-game-rooms')->group(function () {

@@ -46,10 +46,10 @@ class MahJongGameRoomController extends ApiController
                 }
             }
 
-            if (!empty($validated['game_rule_id'])) {
-                $game_rule_id = $validated['game_rule_id'];
+            if (!empty($validated['mah_jong_game_rule_id'])) {
+                $mah_jong_game_rule_id = $validated['mah_jong_game_rule_id'];
 
-                $conditions['game_rule_id'] = $game_rule_id;
+                $conditions['mah_jong_game_rule_id'] = $mah_jong_game_rule_id;
             }
             $res_data = $this->game_room_service->getDataWithPagination($per_page, $page, with: ['game', 'gameRule.fees'], status: $status, searches: $searches, conditions: $conditions);
             return $this->paginatedSuccessResponse($res_data, 200, 'Game Room Lists');

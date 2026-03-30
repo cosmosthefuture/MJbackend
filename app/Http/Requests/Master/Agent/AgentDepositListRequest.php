@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\User\MahJongGameRoom;
+namespace App\Http\Requests\Master\Agent;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ListingRequest extends FormRequest
+class AgentDepositListRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,6 @@ class ListingRequest extends FormRequest
         return [
             'page' => 'integer',
             'per_page' => 'integer',
-            'search' => 'string',
-            // 'game_id' => 'integer|exists:games,id',
-            'mah_jong_game_rule_id' => 'integer|exists:mah_jong_game_rules,id',
         ];
     }
 

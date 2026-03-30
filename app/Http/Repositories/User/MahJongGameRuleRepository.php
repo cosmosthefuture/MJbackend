@@ -3,18 +3,17 @@
 namespace App\Http\Repositories\User;
 
 use App\Http\Repositories\BaseRepo;
-use App\Models\GameRule;
+use App\Models\MahJongGameRule;
 use Illuminate\Cache\RedisStore;
 use Illuminate\Support\Facades\Cache;
 
 
-class GameRuleRepository extends BaseRepo
+class MahJongGameRuleRepository extends BaseRepo
 {
-    public function __construct(GameRule $model)
+    public function __construct(MahJongGameRule $model)
     {
         parent::__construct($model);
     }
-
 
     public function getDataWithPaginationCached(
         int $perPage,
@@ -64,5 +63,23 @@ class GameRuleRepository extends BaseRepo
             ->sortKeys()
             ->map(fn($v, $k) => "{$k}={$v}")
             ->implode(':');
+    }
+
+    public function allRules()
+    {
+        $data = MahJongGameRule::with(['game', 'fees'])->get();
+        if (!$data) {
+            return null;
+        }
+        return $data;
+    }
+
+    public function find($id)
+    {
+        $data = MahJongGameRule::with(['game', 'fees'])->find($id);
+        if (!$data) {
+            return null;
+        }
+        return $data;
     }
 }

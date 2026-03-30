@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Master\Agent\AddMoneyToAgentRequest;
+use App\Http\Requests\Master\Agent\AgentDepositListRequest;
+use App\Http\Requests\Master\Agent\AgentWithdrawListRequest;
+use App\Http\Requests\Master\Agent\WithdrawMoneyFromAgentRequest;
 use Illuminate\Http\Request;
 use App\Http\Requests\Master\Agent\CreateRequest;
 use App\Http\Requests\Master\Agent\UpdateRequest;
@@ -164,11 +167,69 @@ class AgentController extends ApiController
             $validated = $request->validated();
             $agent = $this->agent_service->find($validated['agent_id']);
             $master = $agent->master;
-            if($master->balance < $validated['amount']) {
+            if ($master->balance < $validated['amount']) {
                 return $this->errorResponse('Insufficient balance to add money to agent', 409);
             }
             $result = $this->agent_service->addMoneyToAgent($validated);
             return $this->successResponse($result, 200, 'Money is added to Agent successfully');
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function withdrawMoneyFromAgent(WithdrawMoneyFromAgentRequest $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $agent = $this->agent_service->whereFirst('id', $validated['agent_id']);
+            if ($agent->balance < $validated['amount']) {
+                return $this->errorResponse("withdrawed amount is greater than agent's balance", 409);
+            }
+            $result = $this->agent_service->withdrawMoneyFromAgent($validated);
+            return $this->successResponse($result, 200, 'Money is withdrawed from Agent successfully');
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function agentDepositLists(AgentDepositListRequest $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $per_page = array_key_exists('per_page', $validated) ? $validated['per_page'] : 20;
+            $page = array_key_exists('page', $validated) ? $validated['page'] : 1;
+
+            $res_data = $this->agent_service->getAgentDepositLists($per_page, $page, with: ['agent', 'actionBy']);
+            return $this->paginatedSuccessResponse($res_data, 200, 'Agent Deposit Lists');
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function agentWithdrawLists(AgentWithdrawListRequest $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $per_page = array_key_exists('per_page', $validated) ? $validated['per_page'] : 20;
+            $page = array_key_exists('page', $validated) ? $validated['page'] : 1;
+
+            $res_data = $this->agent_service->getAgentWithdrawLists($per_page, $page, with: ['agent', 'actionBy']);
+            return $this->paginatedSuccessResponse($res_data, 200, 'Agent Withdraw Lists');
         } catch (\Exception $e) {
             logger()->error($e);
             return $this->errorResponse('Something went wrong!', 500);

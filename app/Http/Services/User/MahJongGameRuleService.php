@@ -2,14 +2,14 @@
 
 namespace App\Http\Services\User;
 
-use App\Http\Repositories\User\GameRuleRepository;
+use App\Http\Repositories\User\MahJongGameRuleRepository;
 use Exception;
 
-class GameRuleService
+class MahJongGameRuleService
 {
     protected $game_rule_repository;
 
-    public function __construct(GameRuleRepository $game_rule_repository)
+    public function __construct(MahJongGameRuleRepository $game_rule_repository)
     {
         $this->game_rule_repository = $game_rule_repository;
     }
@@ -23,8 +23,8 @@ class GameRuleService
         array $orConditions = [],
         array $with = [],
         ?array $whereHas = null,
-        ?string $status = null)
-    {
+        ?string $status = null
+    ) {
         try {
             $result = $this->game_rule_repository->getDataWithPagination(page: $page, perPage: $perPage, status: $status, searches: $searches);
             return $result;
@@ -50,6 +50,28 @@ class GameRuleService
             return $result;
         } catch (Exception $e) {
             logger()->error('Error : Failed to fetch game rule data with pagination cached: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getAll()
+    {
+        try {
+            $result = $this->game_rule_repository->allRules();
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to fetch mj game rules: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function find(int $id)
+    {
+        try {
+            $result = $this->game_rule_repository->find($id);
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to fetch mj game rule: ' . $e->getMessage());
             throw $e;
         }
     }

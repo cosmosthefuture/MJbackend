@@ -4,7 +4,9 @@ namespace App\Http\Repositories\Admin;
 
 use App\Http\Repositories\BaseRepo;
 use App\Models\Master;
+use App\Models\MasterDepositRecord;
 use App\Models\MasterWalletRecord;
+use App\Models\MasterWithdrawRecord;
 use App\Models\Permission;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +74,92 @@ class MasterRepository extends BaseRepo
         $data['type'] = 'in';
 
         $result = MasterWalletRecord::create($data);
+
+        // add to master deposit record
+        MasterDepositRecord::create([
+            'master_id' => $data['master_id'],
+            'action_by' => auth('api-admin')->user()->id,
+            'amount' => $data['amount'],
+            'date_time' => now()
+        ]);
+
         return $result;
+    }
+
+    public function withdrawMoneyFromMaster($data)
+    {
+        $master = Master::find($data['master_id']);
+        $master->withdraw($data['amount']);
+        $balance = $master->balance;
+        $data['date_time'] = now();
+        $data['description'] = "Money Withdrawed By Admin.";
+        $data['balance'] = $balance;
+        $data['type'] = 'out';
+
+        $result = MasterWalletRecord::create($data);
+
+        // add to master withdraw record
+        MasterWithdrawRecord::create([
+            'master_id' => $data['master_id'],
+            'action_by' => auth('api-admin')->user()->id,
+            'amount' => $data['amount'],
+            'date_time' => now()
+        ]);
+
+        return $result;
+    }
+
+    public function getMasterDepositLists($page = 1, $per_page = 10, $with = [])
+    {
+        $offset = ($page - 1) * $per_page;
+
+        $query = MasterDepositRecord::with($with)
+            ->orderBy('date_time', 'desc');
+
+        $totalCount = $query->count();
+
+        $results = $query
+            ->skip($offset)
+            ->take($per_page)
+            ->get();
+
+        $totalPages = (int) ceil($totalCount / $per_page);
+
+        return [
+            'data' => $results,
+            'meta' => [
+                'total' => $totalCount,
+                'per_page' => $per_page,
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+            ],
+        ];
+    }
+
+    public function getMasterWithdrawLists($page = 1, $per_page = 10, $with = [])
+    {
+        $offset = ($page - 1) * $per_page;
+
+        $query = MasterWithdrawRecord::with($with)
+            ->orderBy('date_time', 'desc');
+
+        $totalCount = $query->count();
+
+        $results = $query
+            ->skip($offset)
+            ->take($per_page)
+            ->get();
+
+        $totalPages = (int) ceil($totalCount / $per_page);
+
+        return [
+            'data' => $results,
+            'meta' => [
+                'total' => $totalCount,
+                'per_page' => $per_page,
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+            ],
+        ];
     }
 }
