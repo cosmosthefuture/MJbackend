@@ -12,6 +12,11 @@ Route::prefix('agents')->group(function () {
 
         Route::prefix('users')->group(function () {
             Route::post('/add-money', [UserController::class, 'addMoneyToUser']);
+            Route::post('/withdraw-money', [UserController::class, 'withdrawMoneyFromUser']);
+
+            Route::get('/deposit-lists', [UserController::class, 'UserDepositLists']);
+            Route::get('/withdraw-lists', [UserController::class, 'UserWithdrawLists']);
+
             Route::patch('{id}/toggle-status', [UserController::class, 'toggleActive']);
             Route::get('/all', [UserController::class, 'index']);
             Route::post('', [UserController::class, 'create']);
