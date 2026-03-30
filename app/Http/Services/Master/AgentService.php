@@ -113,4 +113,55 @@ class AgentService
             throw $e;
         }
     }
+
+    public function withdrawMoneyFromAgent(array $attributes)
+    {
+        try {
+            $result = $this->agent_repository->withdrawMoneyFromAgent($attributes);
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to withdraw money from agent: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getAgentDepositLists(
+        int $perPage = 10,
+        int $page = 1,
+        string $orderBy = 'created_at',
+        array $searches = null,
+        array $conditions = [],
+        array $orConditions = [],
+        array $with = [],
+        ?array $whereHas = null,
+        ?string $status = null
+    ) {
+        try {
+            $result = $this->agent_repository->getAgentDepositLists(page: $page, per_page: $perPage, with: $with);
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to fetch agent deposit data with pagination: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getAgentWithdrawLists(
+        int $perPage = 10,
+        int $page = 1,
+        string $orderBy = 'created_at',
+        array $searches = null,
+        array $conditions = [],
+        array $orConditions = [],
+        array $with = [],
+        ?array $whereHas = null,
+        ?string $status = null
+    ) {
+        try {
+            $result = $this->agent_repository->getAgentWithdrawLists(page: $page, per_page: $perPage, with: $with);
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to fetch agent withdraw data with pagination: ' . $e->getMessage());
+            throw $e;
+        }
+    }
 }

@@ -44,7 +44,12 @@ Route::prefix('admins')->group(function () {
 
         Route::prefix('masters')->group(function () {
             Route::post('/add-money', [MasterController::class, 'addMoneyToMaster'])->middleware(CheckPermission::class . ':master_update');
+            Route::post('/withdraw-money', [MasterController::class, 'withdrawMoneyFromMaster'])->middleware(CheckPermission::class . ':master_update');
             Route::patch('{id}/toggle-status', [MasterController::class, 'toggleActive'])->middleware(CheckPermission::class . ':master_update');
+
+            Route::get('/deposit-lists', [MasterController::class, 'MasterDepositLists'])->middleware(CheckPermission::class . ':master_view');
+            Route::get('/withdraw-lists', [MasterController::class, 'MasterWithdrawLists'])->middleware(CheckPermission::class . ':master_view');
+
             Route::get('/all', [MasterController::class, 'index'])->middleware(CheckPermission::class . ':master_view');
             Route::post('', [MasterController::class, 'create'])->middleware(CheckPermission::class . ':master_create');
             Route::put('{id}', [MasterController::class, 'update'])->middleware(CheckPermission::class . ':master_update');

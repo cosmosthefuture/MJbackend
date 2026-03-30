@@ -34,6 +34,7 @@ class Agent extends Model implements Wallet
     protected $hidden = [
         'password',
         'remember_token',
+        'wallet'
     ];
 
     protected function casts(): array
@@ -44,6 +45,8 @@ class Agent extends Model implements Wallet
             'force_reset_password' => 'boolean',
         ];
     }
+
+    protected $appends = ['balance'];
 
     public function toArray()
     {
@@ -65,6 +68,11 @@ class Agent extends Model implements Wallet
             }
         }
         return $attributes;
+    }
+
+    public function getBalanceAttribute(): string
+    {
+        return $this->wallet->balance;
     }
 
     public function users()

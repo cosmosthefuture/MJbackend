@@ -48,7 +48,7 @@ class MahJongGameRuleController extends ApiController
                     $status = $search;
                 }
             }
-            $res_data = $this->mah_jong_game_rule_service->getDataWithPagination($per_page, $page, with: ['game', 'createdBy', 'updatedBy'], status: $status, searches: $searches);
+            $res_data = $this->mah_jong_game_rule_service->getDataWithPagination($per_page, $page, with: ['game', 'fees', 'createdBy', 'updatedBy'], status: $status, searches: $searches);
             return $this->paginatedSuccessResponse($res_data, 200, 'Game Rule Lists');
         } catch (\Exception $e) {
             logger()->error($e);

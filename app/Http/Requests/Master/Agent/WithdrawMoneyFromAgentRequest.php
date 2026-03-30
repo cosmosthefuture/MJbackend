@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\User\MahJongGameRoom;
+namespace App\Http\Requests\Master\Agent;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ListingRequest extends FormRequest
+class WithdrawMoneyFromAgentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,13 +22,28 @@ class ListingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'page' => 'integer',
-            'per_page' => 'integer',
-            'search' => 'string',
-            // 'game_id' => 'integer|exists:games,id',
-            'mah_jong_game_rule_id' => 'integer|exists:mah_jong_game_rules,id',
+            'agent_id' => [
+                'required',
+                'integer',
+                'exists:agents,id',
+            ],
+
+            'amount' => [
+                'required',
+                'numeric',
+                'min:1'
+            ]
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'username.regex' =>
+                'Username must contain only lowercase letters and numbers, with no spaces or special characters.',
+        ];
+    }
+
 
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {

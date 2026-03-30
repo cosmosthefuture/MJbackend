@@ -20,7 +20,12 @@ Route::prefix('masters')->group(function () {
 
         Route::prefix('agents')->group(function () {
             Route::post('/add-money', [AgentController::class, 'addMoneyToAgent']);
+            Route::post('/withdraw-money', [AgentController::class, 'withdrawMoneyFromAgent']);
             Route::patch('{id}/toggle-status', [AgentController::class, 'toggleActive']);
+
+            Route::get('/deposit-lists', [AgentController::class, 'AgentDepositLists']);
+            Route::get('/withdraw-lists', [AgentController::class, 'AgentWithdrawLists']);
+
             Route::get('/all', [AgentController::class, 'index']);
             Route::post('', [AgentController::class, 'create']);
             Route::put('{id}', [AgentController::class, 'update']);

@@ -110,4 +110,55 @@ class MasterService
             throw $e;
         }
     }
+
+    public function withdrawMoneyFromMaster(array $attributes)
+    {
+        try {
+            $result = $this->master_repository->withdrawMoneyFromMaster($attributes);
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to withdraw money from master: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getMasterDepositLists(
+        int $perPage = 10,
+        int $page = 1,
+        string $orderBy = 'created_at',
+        array $searches = null,
+        array $conditions = [],
+        array $orConditions = [],
+        array $with = [],
+        ?array $whereHas = null,
+        ?string $status = null
+    ) {
+        try {
+            $result = $this->master_repository->getMasterDepositLists(page: $page, per_page: $perPage, with: $with);
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to fetch master deposit data with pagination: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getMasterWithdrawLists(
+        int $perPage = 10,
+        int $page = 1,
+        string $orderBy = 'created_at',
+        array $searches = null,
+        array $conditions = [],
+        array $orConditions = [],
+        array $with = [],
+        ?array $whereHas = null,
+        ?string $status = null
+    ) {
+        try {
+            $result = $this->master_repository->getMasterWithdrawLists(page: $page, per_page: $perPage, with: $with);
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to fetch master withdraw data with pagination: ' . $e->getMessage());
+            throw $e;
+        }
+    }
 }
