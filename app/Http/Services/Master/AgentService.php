@@ -29,7 +29,7 @@ class AgentService
         ?string $status = null
     ) {
         try {
-            $result = $this->agent_repository->getDataWithPagination(page: $page, perPage: $perPage, with: $with, searches: $searches, status: $status);
+            $result = $this->agent_repository->getDataWithPagination(page: $page, perPage: $perPage, with: $with, searches: $searches, status: $status, conditions: $conditions);
             return $result;
         } catch (Exception $e) {
             logger()->error('Error : Failed to fetch agent data with pagination: ' . $e->getMessage());

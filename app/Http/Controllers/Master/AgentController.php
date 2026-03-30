@@ -54,7 +54,9 @@ class AgentController extends ApiController
                 }
             }
 
-            $res_data = $this->agent_service->getDataWithPagination($per_page, $page, searches: $searches, status: $status, with: ['master']);
+            $conditions = [];
+            $conditions['master_id'] = auth('api-master')->user()->id;
+            $res_data = $this->agent_service->getDataWithPagination($per_page, $page, searches: $searches, status: $status, with: ['master'], conditions: $conditions);
             return $this->paginatedSuccessResponse($res_data, 200, 'Agent Lists');
         } catch (\Exception $e) {
             logger()->error($e);

@@ -153,4 +153,54 @@ class UserService
             throw $e;
         }
     }
+
+    public function withdrawMoneyFromUser(array $attributes)
+    {
+        try {
+            $this->user_repository->withdrawMoneyFromUser($attributes);
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to withdraw money from user: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getUserDepositLists(
+        int $perPage = 10,
+        int $page = 1,
+        string $orderBy = 'created_at',
+        array $searches = null,
+        array $conditions = [],
+        array $orConditions = [],
+        array $with = [],
+        ?array $whereHas = null,
+        ?string $status = null
+    ) {
+        try {
+            $result = $this->user_repository->getUserDepositLists(page: $page, per_page: $perPage, with: $with);
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to fetch user deposit data with pagination: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getUserWithdrawLists(
+        int $perPage = 10,
+        int $page = 1,
+        string $orderBy = 'created_at',
+        array $searches = null,
+        array $conditions = [],
+        array $orConditions = [],
+        array $with = [],
+        ?array $whereHas = null,
+        ?string $status = null
+    ) {
+        try {
+            $result = $this->user_repository->getUserWithdrawLists(page: $page, per_page: $perPage, with: $with);
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to fetch user withdraw data with pagination: ' . $e->getMessage());
+            throw $e;
+        }
+    }
 }

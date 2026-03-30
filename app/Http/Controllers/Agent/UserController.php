@@ -7,7 +7,10 @@ use App\Http\Requests\Agent\User\AddMoneyToUserRequest;
 use App\Http\Requests\Agent\User\CreateRequest;
 use App\Http\Requests\Agent\User\ListingRequest;
 use App\Http\Requests\Agent\User\ResetUserPasswordRequest;
+use App\Http\Requests\Agent\User\UserDepositListRequest;
+use App\Http\Requests\Agent\User\UserWithdrawListRequest;
 use App\Http\Requests\Agent\User\VerifyUserRequest;
+use App\Http\Requests\Agent\User\WithdrawMoneyFromUserRequest;
 use Illuminate\Http\Request;
 
 use App\Http\Services\Agent\UserService;
@@ -59,6 +62,8 @@ class UserController extends ApiController
                     }
                 }
             }
+            $agent = auth('api-agent')->user();
+            $conditions['agent_code'] = $agent->agent_code;
             $agent = auth('api-agent')->user();
             $conditions['agent_code'] = $agent->agent_code;
             $res_data = $this->user_service->getDataWithPagination($per_page, $page, searches: $searches, status: $status, conditions: $conditions);
@@ -185,6 +190,64 @@ class UserController extends ApiController
             }
             $result = $this->user_service->addMoneyToUser($validated);
             return $this->successResponse($result, 200, 'Money is added to User successfully');
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function withdrawMoneyFromUser(WithdrawMoneyFromUserRequest $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $user = $this->user_service->whereFirst('id', $validated['user_id']);
+            if ($user->balance < $validated['amount']) {
+                return $this->errorResponse("withraw amount is greater than user's balance", 409);
+            }
+            $this->user_service->withdrawMoneyFromUser($validated);
+            return $this->successResponse([], 200, 'Money is withdrawed from User successfully');
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function userDepositLists(UserDepositListRequest $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $per_page = array_key_exists('per_page', $validated) ? $validated['per_page'] : 20;
+            $page = array_key_exists('page', $validated) ? $validated['page'] : 1;
+
+            $res_data = $this->user_service->getUserDepositLists($per_page, $page, with: ['user', 'actionBy']);
+            return $this->paginatedSuccessResponse($res_data, 200, 'User Deposit Lists');
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function userWithdrawLists(UserWithdrawListRequest $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $per_page = array_key_exists('per_page', $validated) ? $validated['per_page'] : 20;
+            $page = array_key_exists('page', $validated) ? $validated['page'] : 1;
+
+            $res_data = $this->user_service->getUserWithdrawLists($per_page, $page, with: ['user', 'actionBy']);
+            return $this->paginatedSuccessResponse($res_data, 200, 'User Withdraw Lists');
         } catch (\Exception $e) {
             logger()->error($e);
             return $this->errorResponse('Something went wrong!', 500);
