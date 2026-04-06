@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin\MahJongGameRoom;
+namespace App\Http\Requests\Master\User;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class CreateRequest extends FormRequest
+class AddMoneyToUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,30 +22,28 @@ class CreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'mah_jong_game_rule_id' => [
+            'user_id' => [
                 'required',
-                'exists:mah_jong_game_rules,id',
+                'integer',
+                'exists:users,id',
             ],
 
-            // 'game_id' => [
-            //     'required',
-            //     'exists:games,id',
-            // ],
-
-            'room_name' => [
+            'amount' => [
                 'required',
-                'string',
-                'max:255',
-            ],
-
-            'room_code' => [
-                'required',
-                'string',
-                'max:50',
-                'unique:mah_jong_game_rooms,room_code',
-            ],
+                'numeric',
+                'min:1'
+            ]
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'username.regex' =>
+                'Username must contain only lowercase letters and numbers, with no spaces or special characters.',
+        ];
+    }
+
 
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {

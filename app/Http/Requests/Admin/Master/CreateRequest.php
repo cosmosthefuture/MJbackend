@@ -58,6 +58,14 @@ class CreateRequest extends FormRequest
                 'max:100'
             ],
 
+            'master_code' => [
+                'required',
+                'string',
+                'min:4',
+                'max:30',
+                'unique:masters,master_code',
+            ],
+
             'password' => [
                 'required',
                 'string',

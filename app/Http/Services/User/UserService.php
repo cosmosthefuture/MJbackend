@@ -33,21 +33,7 @@ class UserService
     public function register(array $attributes)
     {
         try {
-            $data = [
-                'name' => $attributes['name'],
-                'username' => $attributes['username'] ?? null,
-                'email' => $attributes['email'] ?? null,
-                'password' => Hash::make($attributes['password']),
-                'phone_number' => $attributes['phone_number'],
-                'is_verified' => true
-            ];
-            if (isset($attributes['agent_code'])) {
-                $data['agent_code'] = $attributes['agent_code'];
-            } else {
-                $default_agent = Agent::where('is_default', 1)->first();
-                $data['agent_code'] = $default_agent->agent_code;
-            }
-            $result = $this->user_repository->create($data);
+            $result = $this->user_repository->create($attributes);
             return $result;
         } catch (Exception $e) {
             logger()->error('Error : Failed to register user: ' . $e->getMessage());

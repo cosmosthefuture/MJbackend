@@ -1,16 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Requests\Admin\LoginRequest;
-use App\Http\Requests\Admin\User\CreateRequest;
-use App\Http\Requests\Admin\User\ListingRequest;
-use App\Http\Requests\Admin\User\ResetUserPasswordRequest;
-use App\Http\Requests\Admin\User\VerifyUserRequest;
+use App\Http\Requests\Master\User\AddMoneyToUserRequest;
+use App\Http\Requests\Master\User\CreateRequest;
+use App\Http\Requests\Master\User\ListingRequest;
+use App\Http\Requests\Master\User\ResetUserPasswordRequest;
+use App\Http\Requests\Master\User\UserDepositListRequest;
+use App\Http\Requests\Master\User\UserWithdrawListRequest;
+use App\Http\Requests\Master\User\VerifyUserRequest;
+use App\Http\Requests\Master\User\WithdrawMoneyFromUserRequest;
 use Illuminate\Http\Request;
 
-use App\Http\Services\Admin\UserService;
+use App\Http\Services\Master\UserService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -52,15 +55,16 @@ class UserController extends ApiController
                 }
                 if (in_array(strtolower($search), ['verified', 'unverified'])) {
                     $searches = [];
-                    if($search == 'verified') {
-                        $conditions = ['is_verified' => true];
+                    if ($search == 'verified') {
+                        $conditions['is_verified'] = true;
                     } else {
-                        $conditions = ['is_verified' => false];
+                        $conditions['is_verified'] = false;
                     }
                 }
             }
-
-            $res_data = $this->user_service->getDataWithPagination($per_page, $page, searches: $searches, status: $status, with: ['agent', 'master'], conditions: $conditions);
+            $master = auth('api-master')->user();
+            $conditions['master_id'] = $master->id;
+            $res_data = $this->user_service->getDataWithPagination($per_page, $page, searches: $searches, status: $status, conditions: $conditions);
             return $this->paginatedSuccessResponse($res_data, 200, 'User Lists');
         } catch (\Exception $e) {
             logger()->error($e);
@@ -70,7 +74,7 @@ class UserController extends ApiController
     public function findOrFail($id)
     {
         try {
-            if (! is_numeric($id)) {
+            if (!is_numeric($id)) {
                 return $this->errorResponse('ID must be an integer!', 422);
             }
             $user = $this->user_service->find($id);
@@ -88,12 +92,14 @@ class UserController extends ApiController
     public function create(CreateRequest $request)
     {
         try {
-            $validator = Validator::make($request->all(), $request->rules(),  $request->messages());
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
             if ($validator->fails()) {
                 return $this->validationErrorResponse($validator);
             }
             $validated = $request->validated();
-            $result = $this->user_service->createByAdmin($validated);
+            $master = auth('api-master')->user();
+            $validated['master_id'] = $master->id;
+            $result = $this->user_service->createByMaster($validated);
             return $this->successResponse($result, 200, 'User is created successfully');
         } catch (\Exception $e) {
             logger()->error($e);
@@ -104,14 +110,14 @@ class UserController extends ApiController
     public function verifyUser(VerifyUserRequest $request, $id)
     {
         try {
-            $validator = Validator::make($request->all(), $request->rules(),  $request->messages());
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
             if ($validator->fails()) {
                 return $this->validationErrorResponse($validator);
             }
             $validated = $request->validated();
             $user = $this->user_service->find($id);
             if ($user) {
-                if($user->is_verified) {
+                if ($user->is_verified) {
                     return $this->errorResponse('User is already verified', 409);
                 }
                 $result = $this->user_service->verifyUser($id, $validated);
@@ -138,7 +144,7 @@ class UserController extends ApiController
                 if (!$user->is_verified) {
                     return $this->errorResponse('User is not verified yet.', 409);
                 }
-                $result = $this->user_service->resetUserPasswordByAdmin($id, $validated);
+                $result = $this->user_service->resetUserPasswordByMaster($id, $validated);
                 return $this->successResponse($result, 200, 'User Password is reset successfully');
             } else {
                 return $this->errorResponse('User not found', 404);
@@ -162,6 +168,84 @@ class UserController extends ApiController
             } else {
                 return $this->errorResponse('User not found', 404);
             }
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function addMoneyToUser(AddMoneyToUserRequest $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $master = auth('api-master')->user();
+            if ($master->balance < $validated['amount']) {
+                return $this->errorResponse('Insufficient balance to add money to user', 409);
+            }
+            $result = $this->user_service->addMoneyToUser($validated);
+            return $this->successResponse($result, 200, 'Money is added to User successfully');
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function withdrawMoneyFromUser(WithdrawMoneyFromUserRequest $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $user = $this->user_service->whereFirst('id', $validated['user_id']);
+            if ($user->balance < $validated['amount']) {
+                return $this->errorResponse("withraw amount is greater than user's balance", 409);
+            }
+            $this->user_service->withdrawMoneyFromUser($validated);
+            return $this->successResponse([], 200, 'Money is withdrawed from User successfully');
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function userDepositLists(UserDepositListRequest $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $per_page = array_key_exists('per_page', $validated) ? $validated['per_page'] : 20;
+            $page = array_key_exists('page', $validated) ? $validated['page'] : 1;
+
+            $res_data = $this->user_service->getUserDepositLists($per_page, $page, with: ['user', 'actionByMaster']);
+            return $this->paginatedSuccessResponse($res_data, 200, 'User Deposit Lists');
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function userWithdrawLists(UserWithdrawListRequest $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $per_page = array_key_exists('per_page', $validated) ? $validated['per_page'] : 20;
+            $page = array_key_exists('page', $validated) ? $validated['page'] : 1;
+
+            $res_data = $this->user_service->getUserWithdrawLists($per_page, $page, with: ['user', 'actionByMaster']);
+            return $this->paginatedSuccessResponse($res_data, 200, 'User Withdraw Lists');
         } catch (\Exception $e) {
             logger()->error($e);
             return $this->errorResponse('Something went wrong!', 500);

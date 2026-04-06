@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Master\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
+class CreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -51,17 +51,19 @@ class RegisterRequest extends FormRequest
                 'unique:users,username',
             ],
 
-            'master_code' => ['nullable', 'exists:masters,master_code', 'required_without:agent_code', 'prohibits:agent_code'],
-            'agent_code' => ['nullable', 'exists:agents,agent_code', 'required_without:master_code', 'prohibits:master_code'],
+            // 'agent_code' => [
+            //     'nullable',
+            //     'string',
+            //     'exists:agents,agent_code'
+            // ],
 
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-                'confirmed',
-            ],
-            // 'otp' => ['required', 'digits:6'],
-            'fcm_token' => 'nullable|string'
+            // 'password' => [
+            //     'required',
+            //     'string',
+            //     'min:8',
+            //     'confirmed',
+            // ],
+            // 'otp' => ['required', 'digits:6']
         ];
     }
 

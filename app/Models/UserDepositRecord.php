@@ -13,7 +13,8 @@ class UserDepositRecord extends Model
     protected $fillable = [
         'user_id',
         'amount',
-        'action_by',
+        'action_by_agent',
+        'action_by_master',
         'date_time'
     ];
 
@@ -39,8 +40,13 @@ class UserDepositRecord extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function actionBy()
+    public function actionByAgent()
     {
-        return $this->belongsTo(Agent::class, 'action_by');
+        return $this->belongsTo(Agent::class, 'action_by_agent');
+    }
+
+    public function actionByMaster()
+    {
+        return $this->belongsTo(Master::class, 'action_by_master');
     }
 }

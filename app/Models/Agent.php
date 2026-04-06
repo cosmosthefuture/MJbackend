@@ -79,8 +79,7 @@ class Agent extends Model implements Wallet
     {
         return $this->hasMany(
             User::class,
-            'agent_code',
-            'agent_code'
+            'agent_id',
         );
     }
 

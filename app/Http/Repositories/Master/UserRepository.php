@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Repositories\Agent;
+namespace App\Http\Repositories\Master;
 
 use App\Http\Repositories\BaseRepo;
-use App\Models\AgentWalletRecord;
+use App\Models\MasterWalletRecord;
 use App\Models\User;
 use App\Models\Permission;
 use App\Models\UserDepositRecord;
@@ -39,22 +39,22 @@ class UserRepository extends BaseRepo
     public function addMoneyToUser($data)
     {
         $user = User::find($data['user_id']);
-        $agent = $user->agent;
-        $agent->withdraw($data['amount']);
+        $master = $user->master;
+        $master->withdraw($data['amount']);
         $user->deposit($data['amount']);
-        $result = AgentWalletRecord::create([
-            'agent_id' => $agent->id,
+        $result = MasterWalletRecord::create([
+            'master_id' => $master->id,
             'date_time' => now(),
             'type' => 'out',
             'description' => 'Add Money To User.',
             'amount' => $data['amount'],
-            'balance' => $agent->balance
+            'balance' => $master->balance
         ]);
 
         // add user deposit record
         UserDepositRecord::create([
             'user_id' => $data['user_id'],
-            'action_by_agent' => auth('api-agent')->user()->id,
+            'action_by_master' => auth('api-master')->user()->id,
             'amount' => $data['amount'],
             'date_time' => now()
         ]);
@@ -65,13 +65,13 @@ class UserRepository extends BaseRepo
     public function withdrawMoneyFromUser($data)
     {
         $user = User::find($data['user_id']);
-        $agent = $user->agent;
+        $master = $user->master;
         $user->withdraw($data['amount']);
 
         // add user withdraw record
         UserWithdrawRecord::create([
             'user_id' => $data['user_id'],
-            'action_by_agent' => auth('api-agent')->user()->id,
+            'action_by_master' => auth('api-master')->user()->id,
             'amount' => $data['amount'],
             'date_time' => now()
         ]);
@@ -81,8 +81,8 @@ class UserRepository extends BaseRepo
     {
         $offset = ($page - 1) * $per_page;
 
-        $agent = auth('api-agent')->user();
-        $query = UserDepositRecord::with($with)->where('action_by_agent', $agent->id)
+        $master = auth('api-master')->user();
+        $query = UserDepositRecord::with($with)->where('action_by_master', $master->id)
             ->orderBy('date_time', 'desc');
 
         $totalCount = $query->count();
@@ -109,8 +109,8 @@ class UserRepository extends BaseRepo
     {
         $offset = ($page - 1) * $per_page;
 
-        $agent = auth('api-agent')->user();
-        $query = UserWithdrawRecord::with($with)->where('action_by_agent', $agent->id)
+        $master = auth('api-master')->user();
+        $query = UserWithdrawRecord::with($with)->where('action_by_master', $master->id)
             ->orderBy('date_time', 'desc');
 
         $totalCount = $query->count();
