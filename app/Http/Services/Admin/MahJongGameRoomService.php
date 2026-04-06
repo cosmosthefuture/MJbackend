@@ -3,6 +3,7 @@
 namespace App\Http\Services\Admin;
 
 use App\Http\Repositories\Admin\MahJongGameRoomRepository;
+use App\Models\Game;
 use Exception;
 
 class MahJongGameRoomService
@@ -23,8 +24,8 @@ class MahJongGameRoomService
         array $orConditions = [],
         array $with = [],
         ?array $whereHas = null,
-        ?string $status = null)
-    {
+        ?string $status = null
+    ) {
         try {
             $result = $this->game_room_repository->getDataWithPagination(page: $page, perPage: $perPage, with: $with, status: $status, searches: $searches, conditions: $conditions);
             return $result;
@@ -48,6 +49,9 @@ class MahJongGameRoomService
     public function create(array $attributes)
     {
         try {
+            $game = Game::where('name', 'Mah Jong')->first();
+            $attributes['game_id'] = $game->id;
+
             $attributes['status'] = 'closed';
             $attributes['created_by'] = auth('api-admin')->user()->id;
             $result = $this->game_room_repository->create($attributes);
@@ -84,7 +88,7 @@ class MahJongGameRoomService
     {
         try {
             $result = $this->game_room_repository->whereFirst($column, $value);
-            if(!$result) {
+            if (!$result) {
                 return null;
             }
             return $result;

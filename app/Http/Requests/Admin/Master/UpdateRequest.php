@@ -47,11 +47,26 @@ class UpdateRequest extends FormRequest
                 'unique:masters,username,' . $id,
             ],
 
+            'master_code' => [
+                'required',
+                'string',
+                'min:4',
+                'max:30',
+                'unique:masters,master_code,' . $id,
+            ],
+
             'winning_commission_percentage' => [
                 'required',
                 'integer',
                 'min:1',
                 'max:100'
+            ],
+
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
             ],
         ];
     }

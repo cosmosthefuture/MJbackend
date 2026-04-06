@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services\Master;
 
-use App\Http\Repositories\Admin\UserRepository;
+use App\Http\Repositories\Master\UserRepository;
 use App\Http\Repositories\BaseRepo;
-use App\Models\Agent;
+use App\Models\Master;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Hash;
@@ -31,7 +31,7 @@ class UserService
         ?string $status = null
     ) {
         try {
-            $result = $this->user_repository->getDataWithPagination(page: $page, perPage: $perPage, with: $with, searches: $searches, status: $status, conditions:$conditions);
+            $result = $this->user_repository->getDataWithPagination(page: $page, perPage: $perPage, with: $with, searches: $searches, status: $status, conditions: $conditions);
             return $result;
         } catch (Exception $e) {
             logger()->error('Error : Failed to fetch user data with pagination: ' . $e->getMessage());
@@ -51,10 +51,20 @@ class UserService
     }
 
 
-    public function createByAdmin(array $attributes)
+    public function createByMaster(array $attributes)
     {
         try {
-            $result = $this->user_repository->create($attributes);
+            $data = [
+                'name' => $attributes['name'],
+                'username' => $attributes['username'] ?? null,
+                'email' => $attributes['email'] ?? null,
+                'master_id' => $attributes['master_id'],
+                'password' => bcrypt(Str::random(16)),
+                'phone_number' => $attributes['phone_number'],
+                'is_verified' => false,
+                'status' => 'inactive'
+            ];
+            $result = $this->user_repository->create($data);
             return $result;
         } catch (Exception $e) {
             logger()->error('Error : Failed to manually create user: ' . $e->getMessage());
@@ -89,7 +99,7 @@ class UserService
         }
     }
 
-    public function resetUserPasswordByAdmin(int $id, array $attributes)
+    public function resetUserPasswordByMaster(int $id, array $attributes)
     {
         try {
             $data = [
@@ -98,7 +108,7 @@ class UserService
             $result = $this->user_repository->update($id, $data);
             return $result;
         } catch (Exception $e) {
-            logger()->error('Error : Failed to reset user password by admin: ' . $e->getMessage());
+            logger()->error('Error : Failed to reset user password by master: ' . $e->getMessage());
             throw $e;
         }
     }
@@ -131,5 +141,66 @@ class UserService
     public function toggleUserStatus($user)
     {
         $this->user_repository->toggleActive($user);
+    }
+
+    public function addMoneyToUser(array $attributes)
+    {
+        try {
+            $result = $this->user_repository->addMoneyToUser($attributes);
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to add money to user: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function withdrawMoneyFromUser(array $attributes)
+    {
+        try {
+            $this->user_repository->withdrawMoneyFromUser($attributes);
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to withdraw money from user: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getUserDepositLists(
+        int $perPage = 10,
+        int $page = 1,
+        string $orderBy = 'created_at',
+        array $searches = null,
+        array $conditions = [],
+        array $orConditions = [],
+        array $with = [],
+        ?array $whereHas = null,
+        ?string $status = null
+    ) {
+        try {
+            $result = $this->user_repository->getUserDepositLists(page: $page, per_page: $perPage, with: $with);
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to fetch user deposit data with pagination: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getUserWithdrawLists(
+        int $perPage = 10,
+        int $page = 1,
+        string $orderBy = 'created_at',
+        array $searches = null,
+        array $conditions = [],
+        array $orConditions = [],
+        array $with = [],
+        ?array $whereHas = null,
+        ?string $status = null
+    ) {
+        try {
+            $result = $this->user_repository->getUserWithdrawLists(page: $page, per_page: $perPage, with: $with);
+            return $result;
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to fetch user withdraw data with pagination: ' . $e->getMessage());
+            throw $e;
+        }
     }
 }

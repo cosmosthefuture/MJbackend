@@ -61,6 +61,13 @@ class UpdateRequest extends FormRequest
                 'min:1',
                 'max:100'
             ],
+
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+            ],
         ];
     }
 

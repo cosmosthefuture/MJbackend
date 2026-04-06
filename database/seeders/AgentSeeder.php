@@ -19,7 +19,7 @@ class AgentSeeder extends Seeder
             'password' => Hash::make('password123'),
             'username' => 'defaultagent123',
             'phone_number' => '09000000000',
-            'agent_code' => 'DEFAULT',
+            'agent_code' => 'AGENT',
             'winning_commission_percentage' => 2,
             'master_id' => 1,
             'is_default' => 1

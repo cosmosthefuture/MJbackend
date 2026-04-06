@@ -4,6 +4,7 @@ use App\Http\Controllers\Master\AgentController;
 use App\Http\Controllers\Master\MasterController;
 use App\Http\Controllers\Master\NotificationController;
 use App\Http\Controllers\Master\PaymentMethodController;
+use App\Http\Controllers\Master\UserController;
 use App\Http\Controllers\Master\WithdrawController;
 
 Route::prefix('masters')->group(function () {
@@ -31,6 +32,21 @@ Route::prefix('masters')->group(function () {
             Route::put('{id}', [AgentController::class, 'update']);
             Route::delete('{id}', [AgentController::class, 'delete']);
             Route::get('{id}', [AgentController::class, 'findOrFail']);
+        });
+
+        Route::prefix('users')->group(function () {
+            Route::post('/add-money', [UserController::class, 'addMoneyToUser']);
+            Route::post('/withdraw-money', [UserController::class, 'withdrawMoneyFromUser']);
+
+            Route::get('/deposit-lists', [UserController::class, 'UserDepositLists']);
+            Route::get('/withdraw-lists', [UserController::class, 'UserWithdrawLists']);
+
+            Route::patch('{id}/toggle-status', [UserController::class, 'toggleActive']);
+            Route::get('/all', [UserController::class, 'index']);
+            Route::post('', [UserController::class, 'create']);
+            Route::put('{id}/verify', [UserController::class, 'verifyUser']);
+            Route::put('{id}/reset-password', [UserController::class, 'resetUserPassword']);
+            Route::get('{id}', [UserController::class, 'findOrFail']);
         });
 
         Route::prefix('notifications')->group(function () {

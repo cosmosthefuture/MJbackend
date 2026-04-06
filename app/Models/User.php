@@ -40,7 +40,8 @@ class User extends Authenticatable implements Wallet, JWTSubject
         'password',
         'username',
         'phone_number',
-        'agent_code',
+        'master_id',
+        'agent_id',
         'status',
         'is_verified',
         'last_logined'
@@ -99,13 +100,14 @@ class User extends Authenticatable implements Wallet, JWTSubject
         return $this->wallet->balance;
     }
 
+    public function master()
+    {
+        return $this->belongsTo(Master::class, 'master_id');
+    }
+
     public function agent()
     {
-        return $this->belongsTo(
-            Agent::class,
-            'agent_code',
-            'agent_code'
-        );
+        return $this->belongsTo(Agent::class, 'agent_id');
     }
 
     protected static function booted()

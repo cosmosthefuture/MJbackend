@@ -58,7 +58,7 @@ class UserService
                 'name' => $attributes['name'],
                 'username' => $attributes['username'] ?? null,
                 'email' => $attributes['email'] ?? null,
-                'agent_code' => $attributes['agent_code'],
+                'agent_id' => $attributes['agent_id'],
                 'password' => bcrypt(Str::random(16)),
                 'phone_number' => $attributes['phone_number'],
                 'is_verified' => false,

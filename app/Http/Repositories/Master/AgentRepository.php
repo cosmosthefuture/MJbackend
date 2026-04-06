@@ -46,6 +46,7 @@ class AgentRepository extends BaseRepo
     {
         DB::beginTransaction();
         try {
+            $attributes['password'] = Hash::make($attributes['password']);
             $agent = parent::update($id, $attributes);
             DB::commit();
             return $agent;

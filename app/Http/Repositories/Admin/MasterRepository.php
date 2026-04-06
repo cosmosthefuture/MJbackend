@@ -30,7 +30,8 @@ class MasterRepository extends BaseRepo
                 'username' => $attributes['username'],
                 'password' => Hash::make($attributes['password']),
                 'phone_number' => $attributes['phone_number'],
-                'winning_commission_percentage' => $attributes['winning_commission_percentage']
+                'winning_commission_percentage' => $attributes['winning_commission_percentage'],
+                'master_code' => $attributes['master_code']
             ];
             $master = parent::create($data);
             DB::commit();
@@ -45,6 +46,7 @@ class MasterRepository extends BaseRepo
     {
         DB::beginTransaction();
         try {
+            $attributes['password'] = Hash::make($attributes['password']);
             $master = parent::update($id, $attributes);
             DB::commit();
             return $master;

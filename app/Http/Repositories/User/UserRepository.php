@@ -3,6 +3,8 @@
 namespace App\Http\Repositories\User;
 
 use App\Http\Repositories\BaseRepo;
+use App\Models\Agent;
+use App\Models\Master;
 use App\Models\User;
 use App\Models\Permission;
 use App\Models\UserFcmToken;
@@ -26,6 +28,27 @@ class UserRepository extends BaseRepo
     public function generateRefreshToken(User $user)
     {
         return $user->createToken($user->username . '_RefreshToken', [''], now()->addWeek())->plainTextToken;
+    }
+
+    public function create($attributes)
+    {
+        $data = [
+            'name' => $attributes['name'],
+            'username' => $attributes['username'] ?? null,
+            'email' => $attributes['email'] ?? null,
+            'password' => Hash::make($attributes['password']),
+            'phone_number' => $attributes['phone_number'],
+            'is_verified' => true
+        ];
+        if (isset($attributes['agent_code'])) {
+            $agent = Agent::where('agent_code', $attributes['agent_code'])->first();
+            $data['agent_id'] = $agent->id;
+        }
+        if (isset($attributes['master_code'])) {
+            $master = Master::where('master_code', $attributes['master_code'])->first();
+            $data['master_id'] = $master->id;
+        }
+        return $this->model->create($data);
     }
 
     public function find($id)

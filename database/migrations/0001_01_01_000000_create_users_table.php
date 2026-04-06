@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('username')->nullable();
             $table->string('phone_number')->unique();
             $table->string('email')->nullable();
-            $table->string('agent_code')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->boolean('is_verified')->default(false);
             $table->timestamp('last_logined')->nullable();

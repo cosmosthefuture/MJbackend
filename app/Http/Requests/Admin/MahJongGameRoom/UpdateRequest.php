@@ -24,10 +24,10 @@ class UpdateRequest extends FormRequest
                 'exists:mah_jong_game_rules,id',
             ],
 
-            'game_id' => [
-                'required',
-                'exists:games,id',
-            ],
+            // 'game_id' => [
+            //     'required',
+            //     'exists:games,id',
+            // ],
 
             'room_name' => [
                 'required',

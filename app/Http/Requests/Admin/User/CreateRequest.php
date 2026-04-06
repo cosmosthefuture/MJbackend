@@ -51,11 +51,8 @@ class CreateRequest extends FormRequest
                 'unique:users,username',
             ],
 
-            'agent_code' => [
-                'nullable',
-                'string',
-                'exists:agents,agent_code'
-            ],
+            'master_code' => ['nullable', 'exists:masters,master_code', 'required_without:agent_code', 'prohibits:agent_code'],
+            'agent_code' => ['nullable', 'exists:agents,agent_code', 'required_without:master_code', 'prohibits:master_code'],
 
             // 'password' => [
             //     'required',

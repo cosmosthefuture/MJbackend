@@ -63,9 +63,7 @@ class UserController extends ApiController
                 }
             }
             $agent = auth('api-agent')->user();
-            $conditions['agent_code'] = $agent->agent_code;
-            $agent = auth('api-agent')->user();
-            $conditions['agent_code'] = $agent->agent_code;
+            $conditions['agent_id'] = $agent->id;
             $res_data = $this->user_service->getDataWithPagination($per_page, $page, searches: $searches, status: $status, conditions: $conditions);
             return $this->paginatedSuccessResponse($res_data, 200, 'User Lists');
         } catch (\Exception $e) {
@@ -100,7 +98,7 @@ class UserController extends ApiController
             }
             $validated = $request->validated();
             $agent = auth('api-agent')->user();
-            $validated['agent_code'] = $agent->agent_code;
+            $validated['agent_id'] = $agent->id;
             $result = $this->user_service->createByAgent($validated);
             return $this->successResponse($result, 200, 'User is created successfully');
         } catch (\Exception $e) {
@@ -227,7 +225,7 @@ class UserController extends ApiController
             $per_page = array_key_exists('per_page', $validated) ? $validated['per_page'] : 20;
             $page = array_key_exists('page', $validated) ? $validated['page'] : 1;
 
-            $res_data = $this->user_service->getUserDepositLists($per_page, $page, with: ['user', 'actionBy']);
+            $res_data = $this->user_service->getUserDepositLists($per_page, $page, with: ['user', 'actionByAgent']);
             return $this->paginatedSuccessResponse($res_data, 200, 'User Deposit Lists');
         } catch (\Exception $e) {
             logger()->error($e);
@@ -246,7 +244,7 @@ class UserController extends ApiController
             $per_page = array_key_exists('per_page', $validated) ? $validated['per_page'] : 20;
             $page = array_key_exists('page', $validated) ? $validated['page'] : 1;
 
-            $res_data = $this->user_service->getUserWithdrawLists($per_page, $page, with: ['user', 'actionBy']);
+            $res_data = $this->user_service->getUserWithdrawLists($per_page, $page, with: ['user', 'actionByAgent']);
             return $this->paginatedSuccessResponse($res_data, 200, 'User Withdraw Lists');
         } catch (\Exception $e) {
             logger()->error($e);
