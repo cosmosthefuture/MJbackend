@@ -5,9 +5,9 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        "*"
-    ],
+    'allowed_origins' => array_filter(
+        explode(',', env('CORS_ALLOWED_ORIGINS', '*'))
+    ),
 
     'allowed_headers' => [
         'Content-Type',

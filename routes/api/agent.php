@@ -22,6 +22,7 @@ Route::prefix('agents')->group(function () {
             Route::post('', [UserController::class, 'create']);
             Route::put('{id}/verify', [UserController::class, 'verifyUser']);
             Route::put('{id}/reset-password', [UserController::class, 'resetUserPassword']);
+            Route::put('{id}', [UserController::class, 'update']);
             Route::get('{id}', [UserController::class, 'findOrFail']);
         });
 

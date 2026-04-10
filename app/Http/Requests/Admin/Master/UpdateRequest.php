@@ -46,15 +46,7 @@ class UpdateRequest extends FormRequest
                 'regex:/^[a-z0-9]+$/',
                 'unique:masters,username,' . $id,
             ],
-
-            'master_code' => [
-                'required',
-                'string',
-                'min:4',
-                'max:30',
-                'unique:masters,master_code,' . $id,
-            ],
-
+            
             'winning_commission_percentage' => [
                 'required',
                 'integer',

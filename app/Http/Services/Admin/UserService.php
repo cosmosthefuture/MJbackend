@@ -65,7 +65,7 @@ class UserService
     public function update(int $id, array $attributes)
     {
         try {
-            $result = $this->user_repository->update($id, $attributes);
+            $result = $this->user_repository->updateUser($id, $attributes);
             return $result;
         } catch (Exception $e) {
             logger()->error('Error : Failed to update user: ' . $e->getMessage());

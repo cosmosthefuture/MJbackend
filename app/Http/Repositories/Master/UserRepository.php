@@ -3,6 +3,7 @@
 namespace App\Http\Repositories\Master;
 
 use App\Http\Repositories\BaseRepo;
+use App\Models\Agent;
 use App\Models\MasterWalletRecord;
 use App\Models\User;
 use App\Models\Permission;
@@ -25,6 +26,15 @@ class UserRepository extends BaseRepo
             return null;
         }
         return $user;
+    }
+
+    public function updateUser($id, $attributes)
+    {
+        $agent = Agent::where('agent_code', $attributes['agent_code'])->first();
+        $master = $agent->master;
+        $attributes['agent_id'] = $agent->id;
+        $attributes['master_id'] = $master->id;
+        return parent::update($id, $attributes);
     }
 
     public function toggleActive($user)

@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\LoginRequest;
 use App\Http\Requests\Admin\User\CreateRequest;
 use App\Http\Requests\Admin\User\ListingRequest;
 use App\Http\Requests\Admin\User\ResetUserPasswordRequest;
+use App\Http\Requests\Admin\User\UpdateRequest;
 use App\Http\Requests\Admin\User\VerifyUserRequest;
 use Illuminate\Http\Request;
 
@@ -52,7 +53,7 @@ class UserController extends ApiController
                 }
                 if (in_array(strtolower($search), ['verified', 'unverified'])) {
                     $searches = [];
-                    if($search == 'verified') {
+                    if ($search == 'verified') {
                         $conditions = ['is_verified' => true];
                     } else {
                         $conditions = ['is_verified' => false];
@@ -70,7 +71,7 @@ class UserController extends ApiController
     public function findOrFail($id)
     {
         try {
-            if (! is_numeric($id)) {
+            if (!is_numeric($id)) {
                 return $this->errorResponse('ID must be an integer!', 422);
             }
             $user = $this->user_service->find($id);
@@ -88,7 +89,7 @@ class UserController extends ApiController
     public function create(CreateRequest $request)
     {
         try {
-            $validator = Validator::make($request->all(), $request->rules(),  $request->messages());
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
             if ($validator->fails()) {
                 return $this->validationErrorResponse($validator);
             }
@@ -104,14 +105,14 @@ class UserController extends ApiController
     public function verifyUser(VerifyUserRequest $request, $id)
     {
         try {
-            $validator = Validator::make($request->all(), $request->rules(),  $request->messages());
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
             if ($validator->fails()) {
                 return $this->validationErrorResponse($validator);
             }
             $validated = $request->validated();
             $user = $this->user_service->find($id);
             if ($user) {
-                if($user->is_verified) {
+                if ($user->is_verified) {
                     return $this->errorResponse('User is already verified', 409);
                 }
                 $result = $this->user_service->verifyUser($id, $validated);
@@ -140,6 +141,30 @@ class UserController extends ApiController
                 }
                 $result = $this->user_service->resetUserPasswordByAdmin($id, $validated);
                 return $this->successResponse($result, 200, 'User Password is reset successfully');
+            } else {
+                return $this->errorResponse('User not found', 404);
+            }
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function update(UpdateRequest $request, $id)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $user = $this->user_service->find($id);
+            if ($user) {
+                if (!$user->is_verified) {
+                    return $this->errorResponse('User is not verified yet.', 409);
+                }
+                $result = $this->user_service->update($id, $validated);
+                return $this->successResponse($result, 200, 'User is updated successfully');
             } else {
                 return $this->errorResponse('User not found', 404);
             }

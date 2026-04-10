@@ -20,7 +20,6 @@ class Master extends Model implements Wallet
         // 'email',
         'phone_number',
         'username',
-        'master_code',
         'password',
         'winning_commission_percentage',
         'status',
