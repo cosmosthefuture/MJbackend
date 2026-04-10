@@ -39,6 +39,7 @@ Route::prefix('admins')->group(function () {
             Route::post('', [UserController::class, 'create'])->middleware(CheckPermission::class . ':user_create');
             Route::put('{id}/verify', [UserController::class, 'verifyUser'])->middleware(CheckPermission::class . ':user_update');
             Route::put('{id}/reset-password', [UserController::class, 'resetUserPassword'])->middleware(CheckPermission::class . ':user_update');
+            Route::put('{id}', [UserController::class, 'update'])->middleware(CheckPermission::class . ':user_update');
             Route::get('{id}', [UserController::class, 'findOrFail'])->middleware(CheckPermission::class . ':user_view');
         });
 

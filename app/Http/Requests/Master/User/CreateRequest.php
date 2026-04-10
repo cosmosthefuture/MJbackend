@@ -51,11 +51,11 @@ class CreateRequest extends FormRequest
                 'unique:users,username',
             ],
 
-            // 'agent_code' => [
-            //     'nullable',
-            //     'string',
-            //     'exists:agents,agent_code'
-            // ],
+            'agent_code' => [
+                'required',
+                'string',
+                'exists:agents,agent_code'
+            ],
 
             // 'password' => [
             //     'required',

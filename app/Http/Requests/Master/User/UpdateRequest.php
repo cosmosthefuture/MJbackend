@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin\Master;
+namespace App\Http\Requests\Master\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,6 +21,7 @@ class CreateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route('id');
         return [
             'name' => [
                 'required',
@@ -28,42 +29,42 @@ class CreateRequest extends FormRequest
                 'max:255',
             ],
 
-            // 'email' => [
-            //     'required',
-            //     'email',
-            //     'max:255',
-            //     'unique:masters,email',
-            // ],
+            'email' => [
+                'nullable',
+                'email',
+                'max:255',
+                'unique:users,email,' . $id,
+            ],
 
             'phone_number' => [
                 'required',
                 'string',
                 'max:20',
-                'unique:masters,phone_number',
+                'unique:users,phone_number,' . $id,
             ],
 
             'username' => [
-                'required',
+                'nullable',
                 'string',
                 'min:4',
                 'max:30',
                 'regex:/^[a-z0-9]+$/',
-                'unique:masters,username',
+                'unique:users,username,' . $id,
             ],
 
-            'winning_commission_percentage' => [
-                'required',
-                'integer',
-                'min:1',
-                'max:100'
-            ],
-
-            'password' => [
+            'agent_code' => [
                 'required',
                 'string',
-                'min:8',
-                'confirmed',
+                'exists:agents,agent_code'
             ],
+
+            // 'password' => [
+            //     'required',
+            //     'string',
+            //     'min:8',
+            //     'confirmed',
+            // ],
+            // 'otp' => ['required', 'digits:6']
         ];
     }
 
@@ -74,7 +75,6 @@ class CreateRequest extends FormRequest
                 'Username must contain only lowercase letters and numbers, with no spaces or special characters.',
         ];
     }
-
 
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {

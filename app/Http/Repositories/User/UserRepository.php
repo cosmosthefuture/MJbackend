@@ -40,14 +40,9 @@ class UserRepository extends BaseRepo
             'phone_number' => $attributes['phone_number'],
             'is_verified' => true
         ];
-        if (isset($attributes['agent_code'])) {
-            $agent = Agent::where('agent_code', $attributes['agent_code'])->first();
-            $data['agent_id'] = $agent->id;
-        }
-        if (isset($attributes['master_code'])) {
-            $master = Master::where('master_code', $attributes['master_code'])->first();
-            $data['master_id'] = $master->id;
-        }
+        $agent = Agent::where('agent_code', $attributes['agent_code'])->first();
+        $data['agent_id'] = $agent->id;
+        $data['master_id'] = $agent->master->id;
         return $this->model->create($data);
     }
 

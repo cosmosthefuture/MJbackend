@@ -7,6 +7,7 @@ use App\Http\Requests\Agent\User\AddMoneyToUserRequest;
 use App\Http\Requests\Agent\User\CreateRequest;
 use App\Http\Requests\Agent\User\ListingRequest;
 use App\Http\Requests\Agent\User\ResetUserPasswordRequest;
+use App\Http\Requests\Agent\User\UpdateRequest;
 use App\Http\Requests\Agent\User\UserDepositListRequest;
 use App\Http\Requests\Agent\User\UserWithdrawListRequest;
 use App\Http\Requests\Agent\User\VerifyUserRequest;
@@ -99,6 +100,7 @@ class UserController extends ApiController
             $validated = $request->validated();
             $agent = auth('api-agent')->user();
             $validated['agent_id'] = $agent->id;
+            $validated['master_id'] = $agent->master->id;
             $result = $this->user_service->createByAgent($validated);
             return $this->successResponse($result, 200, 'User is created successfully');
         } catch (\Exception $e) {
@@ -146,6 +148,30 @@ class UserController extends ApiController
                 }
                 $result = $this->user_service->resetUserPasswordByAgent($id, $validated);
                 return $this->successResponse($result, 200, 'User Password is reset successfully');
+            } else {
+                return $this->errorResponse('User not found', 404);
+            }
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
+
+    public function update(UpdateRequest $request, $id)
+    {
+        try {
+            $validator = Validator::make($request->all(), $request->rules(), $request->messages());
+            if ($validator->fails()) {
+                return $this->validationErrorResponse($validator);
+            }
+            $validated = $request->validated();
+            $user = $this->user_service->find($id);
+            if ($user) {
+                if (!$user->is_verified) {
+                    return $this->errorResponse('User is not verified yet.', 409);
+                }
+                $result = $this->user_service->update($id, $validated);
+                return $this->successResponse($result, 200, 'User is updated successfully');
             } else {
                 return $this->errorResponse('User not found', 404);
             }

@@ -32,12 +32,18 @@ class UserRepository extends BaseRepo
         if (isset($attributes['agent_code'])) {
             $agent = Agent::where('agent_code', $attributes['agent_code'])->first();
             $data['agent_id'] = $agent->id;
-        }
-        if (isset($attributes['master_code'])) {
-            $master = Master::where('master_code', $attributes['master_code'])->first();
-            $data['master_id'] = $master->id;
+            $data['master_id'] = $agent->master->id;
         }
         return $this->model->create($data);
+    }
+
+    public function updateUser($id, $attributes)
+    {
+        $agent = Agent::where('agent_code', $attributes['agent_code'])->first();
+        $master = $agent->master;
+        $attributes['agent_id'] = $agent->id;
+        $attributes['master_id'] = $master->id;
+        return parent::update($id, $attributes);
     }
 
     public function find($id)

@@ -31,7 +31,6 @@ class MasterRepository extends BaseRepo
                 'password' => Hash::make($attributes['password']),
                 'phone_number' => $attributes['phone_number'],
                 'winning_commission_percentage' => $attributes['winning_commission_percentage'],
-                'master_code' => $attributes['master_code']
             ];
             $master = parent::create($data);
             DB::commit();

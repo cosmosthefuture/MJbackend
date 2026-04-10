@@ -4,6 +4,7 @@ namespace App\Http\Services\Master;
 
 use App\Http\Repositories\Master\UserRepository;
 use App\Http\Repositories\BaseRepo;
+use App\Models\Agent;
 use App\Models\Master;
 use App\Models\User;
 use Exception;
@@ -54,13 +55,18 @@ class UserService
     public function createByMaster(array $attributes)
     {
         try {
+            $agent = Agent::where('agent_code', $attributes['agent_code'])->first();
+            $master = $agent->master;
+            $attributes['agent_id'] = $agent->id;
+            $attributes['master_id'] = $master->id;
             $data = [
                 'name' => $attributes['name'],
                 'username' => $attributes['username'] ?? null,
                 'email' => $attributes['email'] ?? null,
-                'master_id' => $attributes['master_id'],
                 'password' => bcrypt(Str::random(16)),
                 'phone_number' => $attributes['phone_number'],
+                'agent_id' => $attributes['agent_id'],
+                'master_id' => $attributes['master_id'],
                 'is_verified' => false,
                 'status' => 'inactive'
             ];
@@ -75,7 +81,7 @@ class UserService
     public function update(int $id, array $attributes)
     {
         try {
-            $result = $this->user_repository->update($id, $attributes);
+            $result = $this->user_repository->updateUser($id, $attributes);
             return $result;
         } catch (Exception $e) {
             logger()->error('Error : Failed to update user: ' . $e->getMessage());

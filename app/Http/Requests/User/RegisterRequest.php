@@ -51,8 +51,8 @@ class RegisterRequest extends FormRequest
                 'unique:users,username',
             ],
 
-            'master_code' => ['nullable', 'exists:masters,master_code', 'required_without:agent_code', 'prohibits:agent_code'],
-            'agent_code' => ['nullable', 'exists:agents,agent_code', 'required_without:master_code', 'prohibits:master_code'],
+            // 'master_code' => ['nullable', 'exists:masters,master_code', 'required_without:agent_code', 'prohibits:agent_code'],
+            'agent_code' => ['required', 'exists:agents,agent_code'],
 
             'password' => [
                 'required',
