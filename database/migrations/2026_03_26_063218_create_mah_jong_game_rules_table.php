@@ -19,7 +19,7 @@ return new class extends Migration {
 
             $table->string('rule_name');
 
-            $table->integer('match_qty_per_round');
+            $table->integer('round_qty_per_match');
             $table->integer('max_player');
 
             $table->double('bet_amount');

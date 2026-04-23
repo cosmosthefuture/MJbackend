@@ -55,11 +55,6 @@ Route::prefix('masters')->group(function () {
             Route::get('{id}', [NotificationController::class, 'findOrFail']);
             Route::post('/read', [NotificationController::class, 'readAllNotifications']);
         });
-
-        Route::prefix('payment-methods')->group(function () {
-            Route::get('/all', [PaymentMethodController::class, 'index']);
-            Route::get('{id}', [PaymentMethodController::class, 'findOrFail']);
-        });
     });
 
     Route::post('/auth/login', [MasterController::class, 'login']);

@@ -13,7 +13,7 @@ class MahJongGameRule extends Model
     protected $fillable = [
         'game_id',
         'rule_name',
-        'match_qty_per_round',
+        'round_qty_per_match',
         'max_player',
         'bet_amount',
         'created_by',

@@ -21,7 +21,7 @@ class WebSocketController extends ApiController
     {
         try {
             $user = auth('api-user')->user();
-            $result = $this->web_socket_service->generateToken($user);
+            $result = $this->web_socket_service->generateTokenToConnectWs($user);
             $result['user'] = $user;
             return $this->successResponse($result, 200, 'Jwt token generated successfully.');
         } catch (\Exception $e) {

@@ -5,6 +5,10 @@ namespace App\Http\Repositories\User;
 use App\Http\Repositories\BaseRepo;
 use App\Models\MahJongGameRoom;
 
+use App\Models\MahJongGameRound;
+use App\Models\MahJongMatch;
+use App\Models\MahJongRoomPlayer;
+use App\Models\MahJongRoundPlayer;
 use DB;
 use Illuminate\Cache\RedisStore;
 use Illuminate\Support\Facades\Cache;
@@ -99,5 +103,168 @@ class MahJongGameRoomRepository extends BaseRepo
             return null;
         }
         return $data;
+    }
+
+    public function getCurrentMatch($roomId)
+    {
+        $match = MahJongMatch::where('mah_jong_game_room_id', $roomId)
+            ->where('status', '!=', 'finished')
+            ->latest()
+            ->first();
+        return $match;
+    }
+
+    public function createNewMatch($roomId, $rule)
+    {
+        $match = MahJongMatch::create([
+            'mah_jong_game_room_id' => $roomId,
+            'total_rounds' => $rule->round_qty_per_match,
+        ]);
+        return $match;
+    }
+
+    public function findCurrentRound($roomId)
+    {
+        $match = MahJongMatch::where('mah_jong_game_room_id', $roomId)
+            ->where('status', '!=', 'finished')
+            ->latest()
+            ->first();
+        $round = MahJongGameRound::where('mah_jong_match_id', $match->id)
+            ->where('status', '!=', 'finished')
+            ->latest()
+            ->first();
+        return $round;
+    }
+
+    public function findRound($roundId)
+    {
+
+        $round = MahJongGameRound::find($roundId);
+        return $round;
+    }
+
+    public function createNewRound($roomId)
+    {
+        $match = MahJongMatch::where('mah_jong_game_room_id', $roomId)
+            ->where('status', '!=', 'finished')
+            ->latest()
+            ->first();
+        $previous_round = MahJongGameRound::where('mah_jong_match_id', $match->id)
+            ->where('status', 'finished')
+            ->latest()
+            ->first();
+        $round_no = $previous_round
+            ? $previous_round->round_no + 1
+            : 1;
+        $round = MahJongGameRound::create([
+            'mah_jong_match_id' => $match->id,
+            'round_no' => $round_no,
+            'status' => 'playing',
+        ]);
+
+        return $round;
+    }
+
+    public function get_player_count($roomId)
+    {
+        return MahJongRoomPlayer::where('mah_jong_game_room_id', $roomId)
+            ->where('is_active', true)
+            ->count();
+    }
+
+    public function addUserIntoRoomPlayers($roomId, $userId)
+    {
+        $player = MahJongRoomPlayer::where('mah_jong_game_room_id', $roomId)
+            ->where('user_id', $userId)
+            ->first();
+
+        if ($player) {
+            $player->is_active = true;
+            $player->save();
+        } else {
+            MahJongRoomPlayer::create([
+                'mah_jong_game_room_id' => $roomId,
+                'user_id' => $userId,
+                'is_active' => true,
+            ]);
+        }
+    }
+
+    public function assign_seat_positions($room, $round)
+    {
+        $players = MahJongRoomPlayer::where('mah_jong_game_room_id', $room->id)
+            ->where('is_active', true)
+            ->with('user')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $seat_position = 1;
+        $roundPlayers = [];
+
+        foreach ($players as $each) {
+            MahJongRoundPlayer::create([
+                'mah_jong_game_round_id' => $round->id,
+                'user_id' => $each->user_id,
+                'seat_position' => $seat_position,
+            ]);
+
+            $roundPlayers[] = [
+                'user_id' => $each->user_id,
+                'name' => $each->user->name ?? null,
+                'seat_position' => $seat_position,
+            ];
+
+            $seat_position++;
+        }
+
+        return $roundPlayers;
+    }
+
+    public function updateStatusOfLeaveUser($roomId, $userId)
+    {
+        MahJongRoomPlayer::where('mah_jong_game_room_id', $roomId)
+            ->where('user_id', $userId)
+            ->update([
+                'is_active' => false,
+            ]);
+
+        $matchId = MahJongMatch::where('mah_jong_game_room_id', $roomId)
+            ->where('status', '!=', 'finished')
+            ->value('id');
+
+        if (!$matchId) {
+            return;
+        }
+
+        $roundId = MahJongGameRound::where('mah_jong_match_id', $matchId)
+            ->where('status', '!=', 'finished')
+            ->value('id');
+
+        if (!$roundId) {
+            return;
+        }
+
+        MahJongRoundPlayer::where('mah_jong_game_round_id', $roundId)
+            ->where('user_id', $userId)
+            ->update([
+                'is_active' => false,
+                'is_auto' => true,
+            ]);
+    }
+
+    public function updateActiveStatusOfRejoinUser($roundId, $userId)
+    {
+        MahJongRoundPlayer::where('mah_jong_game_round_id', $roundId)
+            ->where('user_id', $userId)
+            ->update([
+                'is_active' => true,
+                'is_auto' => false
+            ]);
+    }
+
+    public function endRound($round)
+    {
+        $round->status = 'finished';
+        $round->save();
     }
 }

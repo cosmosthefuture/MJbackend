@@ -29,15 +29,6 @@ Route::prefix('users')->group(function () {
         Route::get('/withdraw-requests/manual', [WithdrawController::class, 'getManualWithdraws']);
         Route::post('/withdraw-requests/create', [WithdrawController::class, 'create']);
 
-        Route::post('/transfer-money', [MoneyTransferController::class, 'create']);
-        Route::post('/money-transfer/confirm', [MoneyTransferController::class, 'accept']);
-        Route::post('/money-transfer/cancel', [MoneyTransferController::class, 'reject']);
-
-        Route::prefix('payment-methods')->group(function () {
-            Route::get('/all', [PaymentMethodController::class, 'index']);
-            Route::get('{id}', [PaymentMethodController::class, 'findOrFail']);
-        });
-
         Route::prefix('notifications')->group(function () {
             Route::get('/all', [NotificationController::class, 'index']);
             Route::get('{id}', [NotificationController::class, 'findOrFail']);
@@ -54,17 +45,10 @@ Route::prefix('users')->group(function () {
 
         Route::prefix('mah-jong-game-rooms')->group(function () {
             Route::get('all', [MahJongGameRoomController::class, 'index']);
-            Route::get('{id}', [MahJongGameRoomController::class, 'findOrFail']);
-        });
-        Route::post('game-rounds/{id}/spin-wheel/place-bet', [GameRoomController::class, 'placeBetForSpinWheel']);
-        Route::post('game-rounds/{id}/spin-wheel/cancel-bet', [GameRoomController::class, 'cancelBetForSpinWheel']);
-        Route::post('game-rounds/{id}/coin-flip/place-bet', [GameRoomController::class, 'placeBetForCoinFlip']);
-        Route::post('game-rounds/{id}/coin-flip/cancel-bet', [GameRoomController::class, 'cancelBetForCoinFlip']);
+            Route::post('{id}/join', [MahJongGameRoomController::class, 'joinRoom']);
 
-        // chat message
-        Route::prefix('chat-messages')->group(function () {
-            Route::get('/all', [ChatController::class, 'index']);
-            Route::post('/send-message', [ChatController::class, 'sendMessage']);
+            Route::post('{id}/join-token', [MahJongGameRoomController::class, 'getJoinToken']);
+            Route::get('{id}', [MahJongGameRoomController::class, 'findOrFail']);
         });
 
         Route::prefix('web-socket')->group(function () {
@@ -86,16 +70,14 @@ Route::prefix('users')->group(function () {
 });
 
 Route::prefix('internal')->group(function () {
-    // spin wheel
-    Route::post('game-rooms/{id}/spin-wheel/start-round', [GameRoomController::class, 'startSpinWheelGameRound'])->middleware(CheckInternalSecret::class);
-    Route::post('game-rounds/{id}/spin-wheel/request-result', [GameRoomController::class, 'requestResultForSpinWheel'])->middleware(CheckInternalSecret::class);
-    Route::post('game-rounds/{id}/spin-wheel/finish', [GameRoomController::class, 'finishRoundForSpinWheel'])->middleware(CheckInternalSecret::class);
+    // mahjong
+    Route::post('mah-jong-game-rooms/{id}/start-round', [MahJongGameRoomController::class, 'startRound'])->middleware(CheckInternalSecret::class);
+    Route::post('mah-jong-game-rooms/{id}/leave-room', [MahJongGameRoomController::class, 'leaveRoom'])->middleware(CheckInternalSecret::class);
 
-    // coin flip
-    Route::post('game-rooms/{id}/coin-flip/start-round', [GameRoomController::class, 'startCoinFlipGameRound'])->middleware(CheckInternalSecret::class);
-    Route::post('game-rounds/{id}/coin-flip/request-result', [GameRoomController::class, 'requestResultForCoinFlip'])->middleware(CheckInternalSecret::class);
-    Route::post('game-rounds/{id}/coin-flip/finish', [GameRoomController::class, 'finishRoundForCoinFlip'])->middleware(CheckInternalSecret::class);
+    Route::get('mah-jong-game-rooms/{id}/get-data', [MahJongGameRoomController::class, 'getRoomData'])->middleware(CheckInternalSecret::class);
+    Route::get('mah-jong-game-rooms/{id}/get-current-match', [MahJongGameRoomController::class, 'getCurrentMatch'])->middleware(CheckInternalSecret::class);
 
-    Route::post('game-rooms', [GameRoomController::class, 'getAllRooms'])->middleware(CheckInternalSecret::class);
-    Route::post('game-rooms/{id}', [GameRoomController::class, 'findOrFail'])->middleware(CheckInternalSecret::class);
+    Route::post('mah-jong-game-rounds/{id}/update-round-player-active-status', [MahJongGameRoomController::class, 'updateRoundPlayerActiveStatus'])->middleware(CheckInternalSecret::class);
+    Route::post('mah-jong-game-rounds/{id}/end-round', [MahJongGameRoomController::class, 'endRound'])->middleware(CheckInternalSecret::class);
+
 });
