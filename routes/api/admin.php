@@ -63,14 +63,6 @@ Route::prefix('admins')->group(function () {
             Route::get('{id}', [AgentController::class, 'findOrFail'])->middleware(CheckPermission::class . ':agent_view');
         });
 
-        Route::prefix('payment-methods')->group(function () {
-            Route::patch('{id}/toggle-status', [PaymentMethodController::class, 'toggleActive'])->middleware(CheckPermission::class . ':payment_method_update');
-            Route::get('/all', [PaymentMethodController::class, 'index'])->middleware(CheckPermission::class . ':payment_method_view');
-            Route::post('', [PaymentMethodController::class, 'create'])->middleware(CheckPermission::class . ':payment_method_create');
-            Route::put('{id}', [PaymentMethodController::class, 'update'])->middleware(CheckPermission::class . ':payment_method_update');
-            Route::get('{id}', [PaymentMethodController::class, 'findOrFail'])->middleware(CheckPermission::class . ':payment_method_view');
-        });
-
         // user deposit
         Route::prefix('user-deposit-requests')->group(function () {
             Route::get('/all', [DepositController::class, 'index'])->middleware(CheckPermission::class . ':user_deposit_request_view');
@@ -112,11 +104,6 @@ Route::prefix('admins')->group(function () {
             // Route::get('{id}', [WithdrawController::class, 'findOrFail'])->middleware(CheckPermission::class . ':user_withdraw_request_view');
         });
 
-        Route::prefix('user-money-transfer-records')->group(function () {
-            Route::get('/all', [MoneyTransferController::class, 'index'])->middleware(CheckPermission::class . ':money_transfer_record_view');
-            Route::get('{id}', [MoneyTransferController::class, 'findOrFail'])->middleware(CheckPermission::class . ':money_transfer_record_view');
-        });
-
         Route::prefix('notifications')->group(function () {
             Route::get('/deposit/all', [NotificationController::class, 'getDepositNotifications']);
             Route::get('/withdraw/all', [NotificationController::class, 'getWithdrawNotifications']);
@@ -153,33 +140,6 @@ Route::prefix('admins')->group(function () {
             Route::get('{id}', [MahJongGameRoomController::class, 'findOrFail'])->middleware(CheckPermission::class . ':game_room_view');
         });
 
-        Route::prefix('spin-wheel')->group(function () {
-            Route::get('bet-histories', [SpinWheelBetController::class, 'index'])->middleware(CheckPermission::class . ':game_view');
-        });
-
-        Route::prefix('coin-flip')->group(function () {
-            Route::get('bet-histories', [CoinFlipBetController::class, 'index'])->middleware(CheckPermission::class . ':game_view');
-        });
-
-        // reports
-        Route::prefix('reports')->group(function () {
-            Route::get('/house-cut', [ReportController::class, 'getHouseCutReports'])->middleware(CheckPermission::class . ':report_view');
-            Route::get('/house-cut/daily-lists', [ReportController::class, 'getDailyHouseCutReportsWithPagination'])->middleware(CheckPermission::class . ':report_view');
-
-            Route::get('/deposit', [ReportController::class, 'getDepositReports'])->middleware(CheckPermission::class . ':report_view');
-            Route::get('/deposit/daily-lists', [ReportController::class, 'getDailyDepositReportsWithPagination'])->middleware(CheckPermission::class . ':report_view');
-
-            Route::get('/money-transfer', [ReportController::class, 'getMoneyTransferReports'])->middleware(CheckPermission::class . ':report_view');
-            Route::get('/money-transfer/daily-lists', [ReportController::class, 'getDailyMoneyTransferReportsWithPagination'])->middleware(CheckPermission::class . ':report_view');
-
-            Route::get('/profit', [ReportController::class, 'getProfitReports'])->middleware(CheckPermission::class . ':report_view');
-            Route::get('/profit/daily-lists', [ReportController::class, 'getDailyProfitReportsWithPagination'])->middleware(CheckPermission::class . ':report_view');
-
-            Route::get('/user-game-history/lists', [ReportController::class, 'getUserGameHistory'])->middleware(CheckPermission::class . ':report_view');
-            
-            Route::get('/monthly-master-commission', [ReportController::class, 'getMasterCommissionByMonth'])->middleware(CheckPermission::class . ':report_view');
-            Route::get('/monthly-agent-commission', [ReportController::class, 'getAgentCommissionByMonth'])->middleware(CheckPermission::class . ':report_view');
-        });
     });
     Route::post('/auth/login', [AdminController::class, 'login']);
 });

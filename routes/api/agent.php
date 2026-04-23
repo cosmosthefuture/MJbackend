@@ -26,11 +26,6 @@ Route::prefix('agents')->group(function () {
             Route::get('{id}', [UserController::class, 'findOrFail']);
         });
 
-        Route::prefix('payment-methods')->group(function () {
-            Route::get('/all', [PaymentMethodController::class, 'index']);
-            Route::get('{id}', [PaymentMethodController::class, 'findOrFail']);
-        });
-
         Route::get('wallet-balance', [AgentController::class, 'getWalletBalance']);
         Route::get('/withdraw-history', [WithdrawController::class, 'agentWithdrawRequestList']);
         Route::post('/withdraw-requests/create', [WithdrawController::class, 'create']);

@@ -24,7 +24,7 @@ class CreateRequest extends FormRequest
     {
         return [
             'rule_name' => ['required', 'string', 'max:255', 'unique:mah_jong_game_rules,rule_name'],
-            'match_qty_per_round' => ['required', 'integer', 'min:1'],
+            'round_qty_per_match' => ['required', 'integer', 'min:1'],
             'max_player' => ['required', 'integer', 'min:2'],
             'bet_amount' => ['required', 'numeric', 'min:0'],
 
