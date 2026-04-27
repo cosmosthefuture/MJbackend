@@ -225,6 +225,16 @@ class MahJongGameRoomService
         }
     }
 
+    public function getShuffledTiles()
+    {
+        try {
+            return $this->game_room_repository->getShuffledTiles();
+        } catch (Exception $e) {
+            logger()->error('Error : Failed to get shuffled ties: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function generateJwtTokenToJoinRoom($user, $roomId)
     {
         $token = JWTAuth::customClaims([

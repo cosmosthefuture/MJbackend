@@ -78,6 +78,8 @@ Route::prefix('internal')->group(function () {
     Route::get('mah-jong-game-rooms/{id}/get-current-match', [MahJongGameRoomController::class, 'getCurrentMatch'])->middleware(CheckInternalSecret::class);
 
     Route::post('mah-jong-game-rounds/{id}/update-round-player-active-status', [MahJongGameRoomController::class, 'updateRoundPlayerActiveStatus'])->middleware(CheckInternalSecret::class);
+    Route::get('mah-jong-game-rounds/get-shuffled-tiles', [MahJongGameRoomController::class, 'getShuffledTiles'])->middleware(CheckInternalSecret::class);
+
     Route::post('mah-jong-game-rounds/{id}/end-round', [MahJongGameRoomController::class, 'endRound'])->middleware(CheckInternalSecret::class);
 
 });
