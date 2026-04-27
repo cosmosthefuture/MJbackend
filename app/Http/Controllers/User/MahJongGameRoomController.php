@@ -332,4 +332,15 @@ class MahJongGameRoomController extends ApiController
             return $this->errorResponse('Something went wrong!', 500);
         }
     }
+
+    public function getShuffledTiles()
+    {
+        try {
+            $tiles = $this->game_room_service->getShuffledTiles();
+            return $this->successResponse($tiles, 200, 'shuffled tiles');
+        } catch (\Exception $e) {
+            logger()->error($e);
+            return $this->errorResponse('Something went wrong!', 500);
+        }
+    }
 }

@@ -267,4 +267,30 @@ class MahJongGameRoomRepository extends BaseRepo
         $round->status = 'finished';
         $round->save();
     }
+
+    public function getShuffledTiles()
+    {
+        $tiles = DB::table('mah_jong_tiles')
+            ->select(
+                'id',
+                'type',
+                'number',
+                'copy_no'
+            )
+            ->get()
+            ->toArray();
+
+        $tiles = array_map(function ($tile) {
+            return [
+                'id' => $tile->id,
+                'type' => $tile->type,
+                'number' => $tile->number,
+                'copy_no' => $tile->copy_no,
+            ];
+        }, $tiles);
+
+        shuffle($tiles);
+
+        return $tiles;
+    }
 }
