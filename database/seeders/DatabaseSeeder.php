@@ -26,7 +26,8 @@ class DatabaseSeeder extends Seeder
             MasterSeeder::class,
             AgentSeeder::class,
             GlobalCommissionSettingSeeder::class,
-            MahJongTileSeeder::class
+            MahJongTileSeeder::class,
+            GlobalDataForTestingSeeder::class
             // DailyHouseCutReportSeeder::class,
             // DailyDepositReportSeeder::class,
             // DailyMoneyTransferCommissionReportSeeder::class,

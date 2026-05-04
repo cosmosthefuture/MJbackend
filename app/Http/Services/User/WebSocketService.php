@@ -22,6 +22,7 @@ class WebSocketService
         ])->fromUser($user);
 
         return [
+            'user_id' => $user->id,
             'ws_token' => $token,
             'expires_in_sec' => 5 * 60,
         ];
