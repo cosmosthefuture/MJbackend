@@ -83,3 +83,19 @@ Route::prefix('internal')->group(function () {
     Route::post('mah-jong-game-rounds/{id}/end-round', [MahJongGameRoomController::class, 'endRound'])->middleware(CheckInternalSecret::class);
 
 });
+
+// temporary , delete later
+Route::post('/dev/reset', function (Request $request) {
+
+    // fresh migrate + seed
+    Artisan::call('migrate:fresh', [
+        '--seed' => true,
+    ]);
+
+    // clear cache, config, routes, views
+    Artisan::call('optimize:clear');
+    return response()->json([
+        'message' => 'System reset completed',
+        'optimize_clear_output' => Artisan::output(),
+    ]);
+});
