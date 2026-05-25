@@ -14,12 +14,11 @@ class GameSeeder extends Seeder
     public function run(): void
     {
         Game::updateOrCreate(
-            ['name' => 'Shan Koe Mee'],
+            ['name' => 'Mah Jong'],
             ['status' => 'inactive']
         );
-
         Game::updateOrCreate(
-            ['name' => 'Mah Jong'],
+            ['name' => 'Shan Koe Mee'],
             ['status' => 'inactive']
         );
     }
